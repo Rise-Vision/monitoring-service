@@ -1,4 +1,4 @@
-package com.risevision.monitoring;
+package com.risevision.monitoring.service;
 
 /**
  * Contains the client IDs and scopes for allowed clients consuming your API.
