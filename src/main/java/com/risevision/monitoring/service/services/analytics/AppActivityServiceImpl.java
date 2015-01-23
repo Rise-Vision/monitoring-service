@@ -1,9 +1,12 @@
 package com.risevision.monitoring.service.services.analytics;
 
-import com.risevision.monitoring.service.api.resources.AppActivity;
+import com.risevision.monitoring.service.services.date.DateService;
+import com.risevision.monitoring.service.services.date.DateServiceImpl;
 import com.risevision.monitoring.service.services.storage.bigquery.BigQueryService;
 import com.risevision.monitoring.service.services.storage.bigquery.BiqQueryServiceImpl;
 import com.risevision.monitoring.service.services.storage.bigquery.entities.LogEntry;
+import com.risevision.monitoring.service.services.storage.datastore.DatastoreService;
+import com.risevision.monitoring.service.services.storage.datastore.entities.AppActivityEntity;
 
 import javax.xml.bind.ValidationException;
 import java.util.Date;
@@ -14,53 +17,82 @@ import java.util.List;
  */
 public class AppActivityServiceImpl implements AppActivityService {
 
+    // Hardcoded the number of days for the average calculation.
+    private final int NUMBER_OF_DAYS = 7;
+
+    private DatastoreService datastoreService;
     private BigQueryService bigQueryService;
+    private DateService dateService;
 
-    public AppActivityServiceImpl(){
+    public AppActivityServiceImpl() {
         bigQueryService = new BiqQueryServiceImpl();
+        datastoreService.getInstance();
+        dateService = new DateServiceImpl();
     }
 
-    public AppActivityServiceImpl(BigQueryService bigQueryService) {
+    public AppActivityServiceImpl(BigQueryService bigQueryService, DatastoreService datastoreService, DateService dateService) {
         this.bigQueryService = bigQueryService;
+        this.datastoreService = datastoreService;
+        this.dateService = dateService;
     }
+
 
     @Override
-    public AppActivity getActivityFromTheLastNumberOfDays(String clientId, String api, int numberOfDays) throws ValidationException {
+    public AppActivityEntity getActivity(String clientId, String api) throws ValidationException {
 
-        AppActivity appActivity = new AppActivity(clientId, api);
+        Date daysAgoDate = dateService.getDaysAgoDate(NUMBER_OF_DAYS);
 
-        if(numberOfDays <= 0){
-            throw new ValidationException("Number of days must be greater than zero.");
-        }
+        AppActivityEntity appActivityEntity = (AppActivityEntity) datastoreService.get(new AppActivityEntity(clientId, api));
+        List<LogEntry> logEntries;
 
-        List<LogEntry> logEntries = bigQueryService.getLogEntriesFromTheLastNumberOfDays(clientId,api,numberOfDays);
+        if (appActivityEntity == null) {
+            logEntries = bigQueryService.getLogEntriesOrderedByDate(clientId, api);
 
+            if (logEntries != null) {
+                appActivityEntity = new AppActivityEntity(clientId, api);
+                Date firstCall = logEntries.get(0).getTime();
+                appActivityEntity.setFirstCall(firstCall);
 
-        if(!logEntries.isEmpty()) {
-
-            Date firstCall = new Date();
-            Date lastCall = new Date(0L);
-
-            for (LogEntry logEntry : logEntries) {
-                Date time = logEntry.getTime();
-
-                if (time.after(lastCall)) {
-                    lastCall = time;
-                }
-
-                if (time.before(firstCall)) {
-                    firstCall = time;
-                }
+                getLastCallAndAverageCallsFromLogEntries(logEntries, appActivityEntity, daysAgoDate);
+                datastoreService.put(appActivityEntity);
             }
 
-            float averageCallsPerDay = logEntries.size()/numberOfDays;
+        } else {
+            // TODO,  We might consider to add a logic here to wait certain time after last call before querying BQ again. Something like 10 to 30 minutes.
+            Date lastCall = appActivityEntity.getLastCall();
+            if (lastCall != null && lastCall.after(daysAgoDate)) {
+                logEntries = bigQueryService.getLogEntriesAfterDateOrdedByDate(clientId, api, daysAgoDate);
+                if (logEntries != null) {
+                    appActivityEntity.setLastCall(logEntries.get(logEntries.size() - 1).getTime());
+                    appActivityEntity.setAvgCallsPerDay(logEntries.size() / NUMBER_OF_DAYS);
+                }
+            } else {
+                logEntries = bigQueryService.getLogEntriesAfterDateOrdedByDate(clientId, api, appActivityEntity.getLastCall());
 
-            appActivity.setFirstCall(firstCall);
-            appActivity.setLastCall(lastCall);
-            appActivity.setAvgCallsPerDay(averageCallsPerDay);
+                if (logEntries != null) {
+                    getLastCallAndAverageCallsFromLogEntries(logEntries, appActivityEntity, daysAgoDate);
+                } else {
+                    appActivityEntity.setAvgCallsPerDay(0.0f);
+
+                }
+            }
+            datastoreService.put(appActivityEntity);
         }
 
-
-        return appActivity;
+        return appActivityEntity;
     }
+
+    private void getLastCallAndAverageCallsFromLogEntries(List<LogEntry> logEntries, AppActivityEntity appActivityEntity, Date daysAgoDate) {
+
+        appActivityEntity.setLastCall(logEntries.get(logEntries.size() - 1).getTime());
+
+        int numberOfLogs = 0;
+        for (LogEntry logEntry : logEntries) {
+            if (logEntry.getTime().after(daysAgoDate) || logEntries.equals(daysAgoDate)) {
+                numberOfLogs++;
+            }
+        }
+        appActivityEntity.setAvgCallsPerDay(numberOfLogs / NUMBER_OF_DAYS);
+    }
+
 }
