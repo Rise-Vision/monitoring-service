@@ -1,4 +1,4 @@
-package com.risevision.monitoring.service.api.accessories;
+package com.risevision.monitoring.service.api.accessors;
 
 import com.google.api.server.spi.ServiceException;
 import com.risevision.monitoring.service.api.resources.AppActivity;
@@ -11,6 +11,8 @@ import javax.xml.bind.ValidationException;
  * Created by rodrigopavezi on 1/20/15.
  */
 public class AppActivityAccessor {
+
+    private final int NUMBER_OF_DAYS = 7;
 
     private AppActivityService appActivityService;
 
@@ -32,6 +34,6 @@ public class AppActivityAccessor {
             throw new ValidationException("Api cannot be null or empty.");
         }
 
-        return appActivityService.getActivity(clientId, api);
+        return appActivityService.getActivityFromTheLastNumberOfDays(clientId, api, NUMBER_OF_DAYS);
     }
 }

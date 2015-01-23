@@ -1,7 +1,7 @@
-package com.risevision.monitoring.service;
+package com.risevision.monitoring.service.api.accessors;
 
 import com.google.api.server.spi.ServiceException;
-import com.risevision.monitoring.service.api.accessories.AppActivityAccessor;
+import com.risevision.monitoring.service.api.accessors.AppActivityAccessor;
 import com.risevision.monitoring.service.api.resources.AppActivity;
 import org.junit.Before;
 import org.junit.Test;
