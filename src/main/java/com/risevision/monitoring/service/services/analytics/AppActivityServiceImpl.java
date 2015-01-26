@@ -2,13 +2,14 @@ package com.risevision.monitoring.service.services.analytics;
 
 import com.risevision.monitoring.service.services.date.DateService;
 import com.risevision.monitoring.service.services.date.DateServiceImpl;
-import com.risevision.monitoring.service.services.storage.bigquery.BigQueryService;
-import com.risevision.monitoring.service.services.storage.bigquery.BiqQueryServiceImpl;
+import com.risevision.monitoring.service.services.storage.bigquery.BiqQueryLogEntryServiceImpl;
+import com.risevision.monitoring.service.services.storage.bigquery.LogEntryService;
 import com.risevision.monitoring.service.services.storage.bigquery.entities.LogEntry;
 import com.risevision.monitoring.service.services.storage.datastore.DatastoreService;
 import com.risevision.monitoring.service.services.storage.datastore.entities.AppActivityEntity;
 
 import javax.xml.bind.ValidationException;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -21,24 +22,24 @@ public class AppActivityServiceImpl implements AppActivityService {
     private final int NUMBER_OF_DAYS = 7;
 
     private DatastoreService datastoreService;
-    private BigQueryService bigQueryService;
+    private LogEntryService logEntryService;
     private DateService dateService;
 
     public AppActivityServiceImpl() {
-        bigQueryService = new BiqQueryServiceImpl();
+        logEntryService = new BiqQueryLogEntryServiceImpl();
         datastoreService.getInstance();
         dateService = new DateServiceImpl();
     }
 
-    public AppActivityServiceImpl(BigQueryService bigQueryService, DatastoreService datastoreService, DateService dateService) {
-        this.bigQueryService = bigQueryService;
+    public AppActivityServiceImpl(LogEntryService logEntryService, DatastoreService datastoreService, DateService dateService) {
+        this.logEntryService = logEntryService;
         this.datastoreService = datastoreService;
         this.dateService = dateService;
     }
 
 
     @Override
-    public AppActivityEntity getActivity(String clientId, String api) throws ValidationException {
+    public AppActivityEntity getActivity(String clientId, String api) throws ValidationException, IOException, InterruptedException {
 
         Date daysAgoDate = dateService.getDaysAgoDate(NUMBER_OF_DAYS);
 
@@ -46,7 +47,7 @@ public class AppActivityServiceImpl implements AppActivityService {
         List<LogEntry> logEntries;
 
         if (appActivityEntity == null) {
-            logEntries = bigQueryService.getLogEntriesOrderedByDate(clientId, api);
+            logEntries = logEntryService.getLogEntriesOrderedByDate(clientId, api);
 
             if (logEntries != null) {
                 appActivityEntity = new AppActivityEntity(clientId, api);
@@ -61,13 +62,13 @@ public class AppActivityServiceImpl implements AppActivityService {
             // TODO,  We might consider to add a logic here to wait certain time after last call before querying BQ again. Something like 10 to 30 minutes.
             Date lastCall = appActivityEntity.getLastCall();
             if (lastCall != null && lastCall.after(daysAgoDate)) {
-                logEntries = bigQueryService.getLogEntriesAfterDateOrdedByDate(clientId, api, daysAgoDate);
+                logEntries = logEntryService.getLogEntriesAfterDateOrdedByDate(clientId, api, daysAgoDate);
                 if (logEntries != null) {
                     appActivityEntity.setLastCall(logEntries.get(logEntries.size() - 1).getTime());
                     appActivityEntity.setAvgCallsPerDay(logEntries.size() / NUMBER_OF_DAYS);
                 }
             } else {
-                logEntries = bigQueryService.getLogEntriesAfterDateOrdedByDate(clientId, api, appActivityEntity.getLastCall());
+                logEntries = logEntryService.getLogEntriesAfterDateOrdedByDate(clientId, api, appActivityEntity.getLastCall());
 
                 if (logEntries != null) {
                     getLastCallAndAverageCallsFromLogEntries(logEntries, appActivityEntity, daysAgoDate);

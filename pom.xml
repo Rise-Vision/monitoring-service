@@ -12,6 +12,7 @@
     <properties>
         <appengine.app.version>1</appengine.app.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <google.client.version>1.19.1</google.client.version>
     </properties>
 
     <prerequisites>
@@ -46,6 +47,27 @@
             <artifactId>objectify</artifactId>
             <version>5.1.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-bigquery</artifactId>
+            <version>v2-rev187-${google.client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client-gson</artifactId>
+            <version>${google.client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client-appengine</artifactId>
+            <version>${google.client.version}</version>
+        </dependency>
+
 
         <!-- Test Dependencies -->
         <dependency>

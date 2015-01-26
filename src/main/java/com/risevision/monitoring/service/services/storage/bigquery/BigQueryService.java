@@ -1,18 +1,23 @@
 package com.risevision.monitoring.service.services.storage.bigquery;
 
-import com.risevision.monitoring.service.services.storage.bigquery.entities.LogEntry;
+import com.google.api.services.bigquery.model.Job;
+import com.google.api.services.bigquery.model.JobReference;
+import com.google.api.services.bigquery.model.TableList;
+import com.google.api.services.bigquery.model.TableRow;
 
-import java.util.Date;
+import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by rodrigopavezi on 1/21/15.
+ * Created by rodrigopavezi on 1/26/15.
  */
 public interface BigQueryService {
 
-    public List<LogEntry> getLogEntriesFromTheLastNumberOfDays(String clientId, String api, int numberOfDays);
+    public JobReference startQuery(String query, String projectId) throws IOException;
 
-    public List<LogEntry> getLogEntriesOrderedByDate(String clientId, String api);
+    public List<TableList.Tables> listTables(String projectId, String datasetId) throws IOException;
 
-    public List<LogEntry> getLogEntriesAfterDateOrdedByDate(String clientId, String api, Date lastCall);
+    public Job checkQueryResults(String projectId, JobReference job) throws IOException, InterruptedException;
+
+    public List<TableRow> getQueryResults(String projectId, Job completedJob) throws IOException;
 }

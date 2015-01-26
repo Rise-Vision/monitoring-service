@@ -1,7 +1,7 @@
 package com.risevision.monitoring.service.services.analytics;
 
 import com.risevision.monitoring.service.services.date.DateService;
-import com.risevision.monitoring.service.services.storage.bigquery.BigQueryService;
+import com.risevision.monitoring.service.services.storage.bigquery.LogEntryService;
 import com.risevision.monitoring.service.services.storage.bigquery.entities.LogEntry;
 import com.risevision.monitoring.service.services.storage.datastore.DatastoreService;
 import com.risevision.monitoring.service.services.storage.datastore.entities.AppActivityEntity;
@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
 import javax.xml.bind.ValidationException;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -30,7 +31,7 @@ import static org.mockito.Mockito.*;
 public class AppActivityServiceTest {
 
     @Mock
-    private BigQueryService bigQueryServiceMock;
+    private LogEntryService logEntryServiceMock;
     @Mock
     private DatastoreService datastoreServiceMock;
     @Mock
@@ -50,7 +51,7 @@ public class AppActivityServiceTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        appActivityService = new AppActivityServiceImpl(bigQueryServiceMock, datastoreServiceMock, dateService);
+        appActivityService = new AppActivityServiceImpl(logEntryServiceMock, datastoreServiceMock, dateService);
         clientId = "xxxxxxxx";
         api = "CoreAPIv1";
         numberOfDays = 7;
@@ -79,7 +80,7 @@ public class AppActivityServiceTest {
     }
 
     @Test
-    public void testGetAppActivityFromDatastoreWithNoLogEntriesAfterLastCallAndNotFromTheLastSevenDays() throws ValidationException {
+    public void testGetAppActivityFromDatastoreWithNoLogEntriesAfterLastCallAndNotFromTheLastSevenDays() throws ValidationException, IOException, InterruptedException {
         float lastAvgCall = 2.5f;
         float expectedAvgCall = 0.0f;
 
@@ -94,14 +95,14 @@ public class AppActivityServiceTest {
         appActivityEntitySpy.setLastCall(calendar.getTime());
 
         given(datastoreServiceMock.get(notNull(AppActivityEntity.class))).willReturn(appActivityEntitySpy);
-        given(bigQueryServiceMock.getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime())).willReturn(null);
+        given(logEntryServiceMock.getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime())).willReturn(null);
 
         AppActivityEntity actualAppActivityEntity = appActivityService.getActivity(clientId, api);
 
         verify(datastoreServiceMock).get(notNull(AppActivityEntity.class));
-        verify(bigQueryServiceMock).getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime());
+        verify(logEntryServiceMock).getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime());
         verify(datastoreServiceMock).put(actualAppActivityEntity);
-        verify(bigQueryServiceMock, never()).getLogEntriesOrderedByDate(clientId, api);
+        verify(logEntryServiceMock, never()).getLogEntriesOrderedByDate(clientId, api);
 
         assertThat("AppActivityEntity is not null", actualAppActivityEntity, is(notNullValue()));
         assertThat("Client Id is equal the client id passed to the query", actualAppActivityEntity.getClientId(), is(clientId));
@@ -110,7 +111,7 @@ public class AppActivityServiceTest {
     }
 
     @Test
-    public void testGetAppActivityFromDatastoreWithLogEntriesAfterLastCallButNotFromTheLastSevenDays() throws ValidationException {
+    public void testGetAppActivityFromDatastoreWithLogEntriesAfterLastCallButNotFromTheLastSevenDays() throws ValidationException, IOException, InterruptedException {
         float lastAvgCall = 2.5f;
         float expectedAvgCall = 0.0f;
 
@@ -127,20 +128,20 @@ public class AppActivityServiceTest {
         List<LogEntry> logEntries = getMockedLogEntries(calendar, 20);
 
         given(datastoreServiceMock.get(notNull(AppActivityEntity.class))).willReturn(appActivityEntitySpy);
-        given(bigQueryServiceMock.getLogEntriesAfterDateOrdedByDate(clientId, api, appActivityEntitySpy.getLastCall())).willReturn(logEntries);
+        given(logEntryServiceMock.getLogEntriesAfterDateOrdedByDate(clientId, api, appActivityEntitySpy.getLastCall())).willReturn(logEntries);
 
         AppActivityEntity actualAppActivityEntity = appActivityService.getActivity(clientId, api);
 
         verify(datastoreServiceMock).get(notNull(AppActivityEntity.class));
-        verify(bigQueryServiceMock).getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime());
+        verify(logEntryServiceMock).getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime());
         verify(datastoreServiceMock).put(actualAppActivityEntity);
-        verify(bigQueryServiceMock, never()).getLogEntriesOrderedByDate(clientId, api);
+        verify(logEntryServiceMock, never()).getLogEntriesOrderedByDate(clientId, api);
 
         assertThat("Average calls per day for the last 7 days is Zero", actualAppActivityEntity.getAvgCallsPerDay(), is(expectedAvgCall));
     }
 
     @Test
-    public void testGetAppActivityFromDatastoreWithLogEntriesAfterLastCallAndFromTheLastSevenDays() throws ValidationException {
+    public void testGetAppActivityFromDatastoreWithLogEntriesAfterLastCallAndFromTheLastSevenDays() throws ValidationException, IOException, InterruptedException {
         float lastAvgCall = 2.5f;
         float expectedAvgCall = 1.0f;
 
@@ -158,21 +159,21 @@ public class AppActivityServiceTest {
         appActivityEntitySpy.setLastCall(calendar.getTime());
 
         given(datastoreServiceMock.get(notNull(AppActivityEntity.class))).willReturn(appActivityEntitySpy);
-        given(bigQueryServiceMock.getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime())).willReturn(logEntries);
+        given(logEntryServiceMock.getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime())).willReturn(logEntries);
 
         AppActivityEntity actualAppActivityEntity = appActivityService.getActivity(clientId, api);
 
         verify(datastoreServiceMock).get(notNull(AppActivityEntity.class));
-        verify(bigQueryServiceMock).getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime());
+        verify(logEntryServiceMock).getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime());
         verify(datastoreServiceMock).put(actualAppActivityEntity);
-        verify(bigQueryServiceMock, never()).getLogEntriesOrderedByDate(clientId, api);
+        verify(logEntryServiceMock, never()).getLogEntriesOrderedByDate(clientId, api);
 
         assertThat("Average calls per day for the last 7 days is Zero", actualAppActivityEntity.getAvgCallsPerDay(), is(expectedAvgCall));
     }
 
 
     @Test
-    public void testGetAppActivityFromDatastoreWithLogEntriesAfterLastCallAndFromTheLastSevenDaysCurrentLastCallIsAfterDaysAgoDate() throws ValidationException {
+    public void testGetAppActivityFromDatastoreWithLogEntriesAfterLastCallAndFromTheLastSevenDaysCurrentLastCallIsAfterDaysAgoDate() throws ValidationException, IOException, InterruptedException {
         float lastAvgCall = 2.5f;
         float expectedAvgCall = 1.0f;
 
@@ -191,21 +192,21 @@ public class AppActivityServiceTest {
         appActivityEntitySpy.setLastCall(calendar.getTime());
 
         given(datastoreServiceMock.get(notNull(AppActivityEntity.class))).willReturn(appActivityEntitySpy);
-        given(bigQueryServiceMock.getLogEntriesAfterDateOrdedByDate(clientId, api, daysAgoDate)).willReturn(logEntries);
+        given(logEntryServiceMock.getLogEntriesAfterDateOrdedByDate(clientId, api, daysAgoDate)).willReturn(logEntries);
 
         AppActivityEntity actualAppActivityEntity = appActivityService.getActivity(clientId, api);
 
         verify(datastoreServiceMock).get(notNull(AppActivityEntity.class));
-        verify(bigQueryServiceMock).getLogEntriesAfterDateOrdedByDate(clientId, api, daysAgoDate);
+        verify(logEntryServiceMock).getLogEntriesAfterDateOrdedByDate(clientId, api, daysAgoDate);
         verify(datastoreServiceMock).put(actualAppActivityEntity);
-        verify(bigQueryServiceMock, never()).getLogEntriesOrderedByDate(clientId, api);
+        verify(logEntryServiceMock, never()).getLogEntriesOrderedByDate(clientId, api);
 
         assertThat("Average calls per day for the last 7 days is Zero", actualAppActivityEntity.getAvgCallsPerDay(), is(expectedAvgCall));
     }
 
 
     @Test
-    public void testGetAppActivityFromBigQueryWithLastSevenDaysLogEntriesAsThereIsNoRecordOnDatastore() throws ValidationException {
+    public void testGetAppActivityFromBigQueryWithLastSevenDaysLogEntriesAsThereIsNoRecordOnDatastore() throws ValidationException, IOException, InterruptedException {
         float expectedAvgCall = 1.0f;
 
         Calendar calendar = Calendar.getInstance();
@@ -216,21 +217,21 @@ public class AppActivityServiceTest {
         given(dateService.getDaysAgoDate(numberOfDays)).willReturn(daysAgoDate);
 
         given(datastoreServiceMock.get(notNull(AppActivityEntity.class))).willReturn(null);
-        given(bigQueryServiceMock.getLogEntriesOrderedByDate(clientId, api)).willReturn(logEntries);
+        given(logEntryServiceMock.getLogEntriesOrderedByDate(clientId, api)).willReturn(logEntries);
 
         AppActivityEntity actualAppActivityEntity = appActivityService.getActivity(clientId, api);
 
         verify(datastoreServiceMock).get(notNull(AppActivityEntity.class));
-        verify(bigQueryServiceMock).getLogEntriesOrderedByDate(clientId, api);
+        verify(logEntryServiceMock).getLogEntriesOrderedByDate(clientId, api);
         verify(datastoreServiceMock).put(actualAppActivityEntity);
-        verify(bigQueryServiceMock, never()).getLogEntriesAfterDateOrdedByDate(eq(clientId), eq(api), notNull(Date.class));
+        verify(logEntryServiceMock, never()).getLogEntriesAfterDateOrdedByDate(eq(clientId), eq(api), notNull(Date.class));
 
         assertThat("Average calls per day for the last 7 days is Zero", actualAppActivityEntity.getFirstCall(), is(logEntries.get(0).getTime()));
         assertThat("Average calls per day for the last 7 days is Zero", actualAppActivityEntity.getAvgCallsPerDay(), is(expectedAvgCall));
     }
 
     @Test
-    public void testGetAppActivityFromBigQueryWithNoLastSevenDaysLogEntriesAsThereIsNoRecordOnDatastore() throws ValidationException {
+    public void testGetAppActivityFromBigQueryWithNoLastSevenDaysLogEntriesAsThereIsNoRecordOnDatastore() throws ValidationException, IOException, InterruptedException {
         float expectedAvgCall = 0.0f;
 
         Calendar calendar = Calendar.getInstance();
@@ -241,35 +242,35 @@ public class AppActivityServiceTest {
         List<LogEntry> logEntries = getMockedLogEntries(calendar, 100);
 
         given(datastoreServiceMock.get(notNull(AppActivityEntity.class))).willReturn(null);
-        given(bigQueryServiceMock.getLogEntriesOrderedByDate(clientId, api)).willReturn(logEntries);
+        given(logEntryServiceMock.getLogEntriesOrderedByDate(clientId, api)).willReturn(logEntries);
 
         AppActivityEntity actualAppActivityEntity = appActivityService.getActivity(clientId, api);
 
         verify(datastoreServiceMock).get(notNull(AppActivityEntity.class));
-        verify(bigQueryServiceMock).getLogEntriesOrderedByDate(clientId, api);
+        verify(logEntryServiceMock).getLogEntriesOrderedByDate(clientId, api);
         verify(datastoreServiceMock).put(actualAppActivityEntity);
-        verify(bigQueryServiceMock, never()).getLogEntriesAfterDateOrdedByDate(eq(clientId), eq(api), notNull(Date.class));
+        verify(logEntryServiceMock, never()).getLogEntriesAfterDateOrdedByDate(eq(clientId), eq(api), notNull(Date.class));
 
         assertThat("Average calls per day for the last 7 days is Zero", actualAppActivityEntity.getFirstCall(), is(logEntries.get(0).getTime()));
         assertThat("Average calls per day for the last 7 days is Zero", actualAppActivityEntity.getAvgCallsPerDay(), is(expectedAvgCall));
     }
 
     @Test
-    public void testGetAppActivityWithNoLogsOnDatastoreAndBigQuery() throws ValidationException {
+    public void testGetAppActivityWithNoLogsOnDatastoreAndBigQuery() throws ValidationException, IOException, InterruptedException {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -numberOfDays);
         Date daysAgoDate = calendar.getTime();
         given(dateService.getDaysAgoDate(numberOfDays)).willReturn(daysAgoDate);
 
         given(datastoreServiceMock.get(notNull(AppActivityEntity.class))).willReturn(null);
-        given(bigQueryServiceMock.getLogEntriesOrderedByDate(clientId, api)).willReturn(null);
+        given(logEntryServiceMock.getLogEntriesOrderedByDate(clientId, api)).willReturn(null);
 
         AppActivityEntity actualAppActivityEntity = appActivityService.getActivity(clientId, api);
 
         verify(datastoreServiceMock).get(notNull(AppActivityEntity.class));
-        verify(bigQueryServiceMock).getLogEntriesOrderedByDate(clientId, api);
+        verify(logEntryServiceMock).getLogEntriesOrderedByDate(clientId, api);
         verify(datastoreServiceMock, never()).put(actualAppActivityEntity);
-        verify(bigQueryServiceMock, never()).getLogEntriesAfterDateOrdedByDate(eq(clientId), eq(api), notNull(Date.class));
+        verify(logEntryServiceMock, never()).getLogEntriesAfterDateOrdedByDate(eq(clientId), eq(api), notNull(Date.class));
 
         assertThat("AppActivityEntity is not null", actualAppActivityEntity, is(nullValue()));
 
