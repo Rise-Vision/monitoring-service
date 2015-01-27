@@ -11,6 +11,15 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <filter>
+        <filter-name>NamespaceFilter</filter-name>
+        <filter-class>com.risevision.monitoring.service.filters.NamespaceFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>NamespaceFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <servlet>
         <servlet-name>SystemServiceServlet</servlet-name>
         <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
