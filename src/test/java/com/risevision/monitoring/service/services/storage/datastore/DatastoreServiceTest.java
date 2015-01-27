@@ -1,4 +1,4 @@
-package com.risevision.monitoring.service.services.analytics.storage.datastore;
+package com.risevision.monitoring.service.services.storage.datastore;
 
 /**
  * Created by rodrigopavezi on 12/9/14.
@@ -7,8 +7,6 @@ package com.risevision.monitoring.service.services.analytics.storage.datastore;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
-import com.risevision.monitoring.service.services.storage.datastore.DatastoreService;
-import com.risevision.monitoring.service.services.storage.datastore.OfyService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

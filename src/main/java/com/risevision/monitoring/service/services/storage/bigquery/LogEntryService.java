@@ -2,7 +2,6 @@ package com.risevision.monitoring.service.services.storage.bigquery;
 
 import com.risevision.monitoring.service.services.storage.bigquery.entities.LogEntry;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +10,7 @@ import java.util.List;
  */
 public interface LogEntryService {
 
-    public List<LogEntry> getLogEntriesOrderedByDate(String clientId, String api) throws IOException, InterruptedException;
+    public List<LogEntry> getLogEntriesOrderedByDate(String clientId, String api);
 
-    public List<LogEntry> getLogEntriesAfterDateOrdedByDate(String clientId, String api, Date lastCall) throws IOException, InterruptedException;
+    public List<LogEntry> getLogEntriesAfterDateOrderedByDate(String clientId, String api, Date lastCall);
 }

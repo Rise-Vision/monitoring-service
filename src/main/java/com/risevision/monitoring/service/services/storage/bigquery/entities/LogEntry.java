@@ -53,4 +53,29 @@ public class LogEntry {
         this.logMessage = logMessage;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LogEntry logEntry = (LogEntry) o;
+
+        if (host != null ? !host.equals(logEntry.host) : logEntry.host != null) return false;
+        if (ip != null ? !ip.equals(logEntry.ip) : logEntry.ip != null) return false;
+        if (logMessage != null ? !logMessage.equals(logEntry.logMessage) : logEntry.logMessage != null) return false;
+        if (resource != null ? !resource.equals(logEntry.resource) : logEntry.resource != null) return false;
+        if (time != null ? !time.equals(logEntry.time) : logEntry.time != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = ip != null ? ip.hashCode() : 0;
+        result = 31 * result + (host != null ? host.hashCode() : 0);
+        result = 31 * result + (resource != null ? resource.hashCode() : 0);
+        result = 31 * result + (logMessage != null ? logMessage.hashCode() : 0);
+        result = 31 * result + (time != null ? time.hashCode() : 0);
+        return result;
+    }
 }

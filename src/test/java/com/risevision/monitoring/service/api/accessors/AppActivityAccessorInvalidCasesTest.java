@@ -1,14 +1,16 @@
 package com.risevision.monitoring.service.api.accessors;
 
 import com.google.api.server.spi.ServiceException;
-import com.risevision.monitoring.service.api.accessors.AppActivityAccessor;
 import com.risevision.monitoring.service.api.resources.AppActivity;
+import com.risevision.monitoring.service.services.analytics.AppActivityService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import javax.xml.bind.ValidationException;
 import java.util.Arrays;
@@ -21,17 +23,13 @@ import java.util.List;
 @RunWith(Parameterized.class)
 public class AppActivityAccessorInvalidCasesTest {
 
-    private AppActivityAccessor appActivityAccessor;
-
     @Parameter
     public String api;
     @Parameter(value = 1)
     public String clientId;
-
-    @Before
-    public void setup(){
-        appActivityAccessor = new AppActivityAccessor();
-    }
+    @Mock
+    private AppActivityService appActivityService;
+    private AppActivityAccessor appActivityAccessor;
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -50,6 +48,11 @@ public class AppActivityAccessorInvalidCasesTest {
         return scenariosToBeTested;
     }
 
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        appActivityAccessor = new AppActivityAccessor(appActivityService);
+    }
 
     @Test(expected = ValidationException.class)
     public void test() throws ServiceException, ValidationException {

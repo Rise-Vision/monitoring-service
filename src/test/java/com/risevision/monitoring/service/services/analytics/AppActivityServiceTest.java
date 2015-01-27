@@ -95,12 +95,12 @@ public class AppActivityServiceTest {
         appActivityEntitySpy.setLastCall(calendar.getTime());
 
         given(datastoreServiceMock.get(notNull(AppActivityEntity.class))).willReturn(appActivityEntitySpy);
-        given(logEntryServiceMock.getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime())).willReturn(null);
+        given(logEntryServiceMock.getLogEntriesAfterDateOrderedByDate(clientId, api, calendar.getTime())).willReturn(null);
 
         AppActivityEntity actualAppActivityEntity = appActivityService.getActivity(clientId, api);
 
         verify(datastoreServiceMock).get(notNull(AppActivityEntity.class));
-        verify(logEntryServiceMock).getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime());
+        verify(logEntryServiceMock).getLogEntriesAfterDateOrderedByDate(clientId, api, calendar.getTime());
         verify(datastoreServiceMock).put(actualAppActivityEntity);
         verify(logEntryServiceMock, never()).getLogEntriesOrderedByDate(clientId, api);
 
@@ -128,12 +128,12 @@ public class AppActivityServiceTest {
         List<LogEntry> logEntries = getMockedLogEntries(calendar, 20);
 
         given(datastoreServiceMock.get(notNull(AppActivityEntity.class))).willReturn(appActivityEntitySpy);
-        given(logEntryServiceMock.getLogEntriesAfterDateOrdedByDate(clientId, api, appActivityEntitySpy.getLastCall())).willReturn(logEntries);
+        given(logEntryServiceMock.getLogEntriesAfterDateOrderedByDate(clientId, api, appActivityEntitySpy.getLastCall())).willReturn(logEntries);
 
         AppActivityEntity actualAppActivityEntity = appActivityService.getActivity(clientId, api);
 
         verify(datastoreServiceMock).get(notNull(AppActivityEntity.class));
-        verify(logEntryServiceMock).getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime());
+        verify(logEntryServiceMock).getLogEntriesAfterDateOrderedByDate(clientId, api, calendar.getTime());
         verify(datastoreServiceMock).put(actualAppActivityEntity);
         verify(logEntryServiceMock, never()).getLogEntriesOrderedByDate(clientId, api);
 
@@ -159,12 +159,12 @@ public class AppActivityServiceTest {
         appActivityEntitySpy.setLastCall(calendar.getTime());
 
         given(datastoreServiceMock.get(notNull(AppActivityEntity.class))).willReturn(appActivityEntitySpy);
-        given(logEntryServiceMock.getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime())).willReturn(logEntries);
+        given(logEntryServiceMock.getLogEntriesAfterDateOrderedByDate(clientId, api, calendar.getTime())).willReturn(logEntries);
 
         AppActivityEntity actualAppActivityEntity = appActivityService.getActivity(clientId, api);
 
         verify(datastoreServiceMock).get(notNull(AppActivityEntity.class));
-        verify(logEntryServiceMock).getLogEntriesAfterDateOrdedByDate(clientId, api, calendar.getTime());
+        verify(logEntryServiceMock).getLogEntriesAfterDateOrderedByDate(clientId, api, calendar.getTime());
         verify(datastoreServiceMock).put(actualAppActivityEntity);
         verify(logEntryServiceMock, never()).getLogEntriesOrderedByDate(clientId, api);
 
@@ -192,12 +192,12 @@ public class AppActivityServiceTest {
         appActivityEntitySpy.setLastCall(calendar.getTime());
 
         given(datastoreServiceMock.get(notNull(AppActivityEntity.class))).willReturn(appActivityEntitySpy);
-        given(logEntryServiceMock.getLogEntriesAfterDateOrdedByDate(clientId, api, daysAgoDate)).willReturn(logEntries);
+        given(logEntryServiceMock.getLogEntriesAfterDateOrderedByDate(clientId, api, daysAgoDate)).willReturn(logEntries);
 
         AppActivityEntity actualAppActivityEntity = appActivityService.getActivity(clientId, api);
 
         verify(datastoreServiceMock).get(notNull(AppActivityEntity.class));
-        verify(logEntryServiceMock).getLogEntriesAfterDateOrdedByDate(clientId, api, daysAgoDate);
+        verify(logEntryServiceMock).getLogEntriesAfterDateOrderedByDate(clientId, api, daysAgoDate);
         verify(datastoreServiceMock).put(actualAppActivityEntity);
         verify(logEntryServiceMock, never()).getLogEntriesOrderedByDate(clientId, api);
 
@@ -224,7 +224,7 @@ public class AppActivityServiceTest {
         verify(datastoreServiceMock).get(notNull(AppActivityEntity.class));
         verify(logEntryServiceMock).getLogEntriesOrderedByDate(clientId, api);
         verify(datastoreServiceMock).put(actualAppActivityEntity);
-        verify(logEntryServiceMock, never()).getLogEntriesAfterDateOrdedByDate(eq(clientId), eq(api), notNull(Date.class));
+        verify(logEntryServiceMock, never()).getLogEntriesAfterDateOrderedByDate(eq(clientId), eq(api), notNull(Date.class));
 
         assertThat("Average calls per day for the last 7 days is Zero", actualAppActivityEntity.getFirstCall(), is(logEntries.get(0).getTime()));
         assertThat("Average calls per day for the last 7 days is Zero", actualAppActivityEntity.getAvgCallsPerDay(), is(expectedAvgCall));
@@ -249,7 +249,7 @@ public class AppActivityServiceTest {
         verify(datastoreServiceMock).get(notNull(AppActivityEntity.class));
         verify(logEntryServiceMock).getLogEntriesOrderedByDate(clientId, api);
         verify(datastoreServiceMock).put(actualAppActivityEntity);
-        verify(logEntryServiceMock, never()).getLogEntriesAfterDateOrdedByDate(eq(clientId), eq(api), notNull(Date.class));
+        verify(logEntryServiceMock, never()).getLogEntriesAfterDateOrderedByDate(eq(clientId), eq(api), notNull(Date.class));
 
         assertThat("Average calls per day for the last 7 days is Zero", actualAppActivityEntity.getFirstCall(), is(logEntries.get(0).getTime()));
         assertThat("Average calls per day for the last 7 days is Zero", actualAppActivityEntity.getAvgCallsPerDay(), is(expectedAvgCall));
@@ -270,7 +270,7 @@ public class AppActivityServiceTest {
         verify(datastoreServiceMock).get(notNull(AppActivityEntity.class));
         verify(logEntryServiceMock).getLogEntriesOrderedByDate(clientId, api);
         verify(datastoreServiceMock, never()).put(actualAppActivityEntity);
-        verify(logEntryServiceMock, never()).getLogEntriesAfterDateOrdedByDate(eq(clientId), eq(api), notNull(Date.class));
+        verify(logEntryServiceMock, never()).getLogEntriesAfterDateOrderedByDate(eq(clientId), eq(api), notNull(Date.class));
 
         assertThat("AppActivityEntity is not null", actualAppActivityEntity, is(nullValue()));
 

@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.xml.bind.ValidationException;
+import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -39,7 +40,7 @@ public class AppActivityAccessorTest {
     }
 
     @Test
-    public void testGetAppActivityForAnAPIAndAClientId() throws ServiceException, ValidationException {
+    public void testGetAppActivityForAnAPIAndAClientId() throws ServiceException, ValidationException, IOException, InterruptedException {
         given(appActivityService.getActivity(clientId, api)).willReturn(appActivityEntity);
 
         AppActivity response = appActivityAccessor.get(clientId, api);

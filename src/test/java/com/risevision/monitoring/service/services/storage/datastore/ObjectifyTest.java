@@ -1,8 +1,7 @@
-package com.risevision.monitoring.service.services.analytics.storage.datastore;
+package com.risevision.monitoring.service.services.storage.datastore;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.risevision.monitoring.service.services.storage.datastore.OfyService;
 import org.junit.After;
 import org.junit.Before;
 
