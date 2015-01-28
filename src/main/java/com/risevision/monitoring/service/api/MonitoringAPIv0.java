@@ -20,7 +20,9 @@ import javax.xml.bind.ValidationException;
         version = "v0",
         namespace = @ApiNamespace(ownerDomain = "risevision.com",
                 ownerName = "risevision",
-                packagePath = "com/risevision/monitoring"))
+                packagePath = "com/risevision/monitoring"),
+        clientIds = {"614513768474.apps.googleusercontent.com", com.google.api.server.spi.Constant.API_EXPLORER_CLIENT_ID}
+)
 
 public class MonitoringAPIv0 {
 
