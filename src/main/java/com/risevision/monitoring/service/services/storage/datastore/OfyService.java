@@ -5,11 +5,11 @@ import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.util.Closeable;
 import com.risevision.monitoring.service.services.storage.datastore.entities.AppActivityEntity;
-import com.risevision.monitoring.service.services.storage.datastore.entities.DatastoreEntity;
+import com.risevision.monitoring.service.services.storage.datastore.entities.MonitoringDatastoreEntity;
 
 public class OfyService {
     static {
-        factory().register(DatastoreEntity.class);
+        factory().register(MonitoringDatastoreEntity.class);
         factory().register(AppActivityEntity.class);
     }
 

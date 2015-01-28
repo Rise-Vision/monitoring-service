@@ -8,7 +8,7 @@ import java.util.Date;
  * Created by rodrigopavezi on 1/23/15.
  */
 @Subclass(index = true)
-public class AppActivityEntity extends DatastoreEntity {
+public class AppActivityEntity extends MonitoringDatastoreEntity {
 
     private String clientId;
     private String api;

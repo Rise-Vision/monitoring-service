@@ -11,7 +11,7 @@ import java.util.UUID;
  * Created by rodrigopavezi on 12/10/14.
  */
 @Entity
-public class DatastoreEntity {
+public class MonitoringDatastoreEntity {
 
     @Id
     private String id;
@@ -20,11 +20,11 @@ public class DatastoreEntity {
     private String changedBy;
     private String createdBy;
 
-    public DatastoreEntity() {
+    public MonitoringDatastoreEntity() {
         this.id = UUID.randomUUID().toString();
     }
 
-    public DatastoreEntity(String id) {
+    public MonitoringDatastoreEntity(String id) {
         this.id = id;
     }
 
