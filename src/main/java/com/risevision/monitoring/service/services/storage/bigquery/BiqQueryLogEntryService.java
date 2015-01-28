@@ -4,6 +4,7 @@ import com.google.api.services.bigquery.model.Job;
 import com.google.api.services.bigquery.model.JobReference;
 import com.google.api.services.bigquery.model.TableRow;
 import com.risevision.monitoring.service.services.storage.bigquery.entities.LogEntry;
+import com.risevision.monitoring.service.util.Options;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -18,21 +19,20 @@ public class BiqQueryLogEntryService implements LogEntryService {
 
     private final Logger logger = Logger.getLogger(BiqQueryLogEntryService.class.getName());
 
-
-    private final String PROJECT_ID = "rvacore-test";
-    private final String DATASET_ID = "appengine_logs";
-
     private BigQueryService bigQueryService;
     private QueryBuilderService logEntryQueryBuilderService;
+    private Options options;
 
     public BiqQueryLogEntryService() {
         bigQueryService = new BigQueryServiceImpl();
-        logEntryQueryBuilderService = new LogEntryQueryBuilderService(bigQueryService, PROJECT_ID, DATASET_ID);
+        options = Options.getInstance();
+        logEntryQueryBuilderService = new LogEntryQueryBuilderService(bigQueryService, options.getPROJECT_ID(), options.getDATASET_ID());
     }
 
-    public BiqQueryLogEntryService(BigQueryService bigQueryService, QueryBuilderService logEntryQueryBuilderService) {
+    public BiqQueryLogEntryService(BigQueryService bigQueryService, QueryBuilderService logEntryQueryBuilderService, Options options) {
         this.bigQueryService = bigQueryService;
         this.logEntryQueryBuilderService = logEntryQueryBuilderService;
+        this.options = options;
     }
 
 
@@ -78,11 +78,11 @@ public class BiqQueryLogEntryService implements LogEntryService {
         List<LogEntry> logEntries = null;
 
         try {
-            JobReference jobReference = bigQueryService.startQuery(query, PROJECT_ID);
+            JobReference jobReference = bigQueryService.startQuery(query, options.getPROJECT_ID());
 
-            Job completedJob = bigQueryService.checkQueryResults(PROJECT_ID, jobReference);
+            Job completedJob = bigQueryService.checkQueryResults(options.getPROJECT_ID(), jobReference);
 
-            List<TableRow> resultRows = bigQueryService.getQueryResults(PROJECT_ID, completedJob);
+            List<TableRow> resultRows = bigQueryService.getQueryResults(options.getPROJECT_ID(), completedJob);
 
             if (resultRows != null && resultRows.size() > 0) {
                 logEntries = new LinkedList<>();

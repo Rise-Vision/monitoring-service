@@ -19,6 +19,36 @@
         <maven>3.1.0</maven>
     </prerequisites>
 
+    <profiles>
+        <profile>
+            <id>prod</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/config/prod</directory>
+                        <filtering>false</filtering>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>stage</id>
+            <activation>
+                <file>
+                    <missing>${basedir/target/classes/application.config</missing>
+                </file>
+            </activation>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/config/stage</directory>
+                        <filtering>false</filtering>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
         <!-- Compile/runtime dependencies -->
         <dependency>
@@ -66,6 +96,11 @@
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client-appengine</artifactId>
             <version>${google.client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>config</artifactId>
+            <version>1.2.1</version>
         </dependency>
 
 

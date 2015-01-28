@@ -5,6 +5,7 @@ import com.google.api.services.bigquery.model.JobReference;
 import com.google.api.services.bigquery.model.TableCell;
 import com.google.api.services.bigquery.model.TableRow;
 import com.risevision.monitoring.service.services.storage.bigquery.entities.LogEntry;
+import com.risevision.monitoring.service.util.Options;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -34,6 +35,9 @@ public class BigQueryLogEntryServiceTest {
     private BigQueryService bigQueryService;
     @Mock
     private QueryBuilderService queryBuilderService;
+    @Mock
+    private Options options;
+
     private JobReference jobReference;
     private Job job;
     private List<TableRow> rows;
@@ -42,7 +46,7 @@ public class BigQueryLogEntryServiceTest {
     @Before
     public void setup() throws ParseException {
         MockitoAnnotations.initMocks(this);
-        bigQueryLogEntryService = new BiqQueryLogEntryService(bigQueryService, queryBuilderService);
+        bigQueryLogEntryService = new BiqQueryLogEntryService(bigQueryService, queryBuilderService, options);
 
         jobReference = new JobReference();
         job = new Job();
@@ -122,6 +126,7 @@ public class BigQueryLogEntryServiceTest {
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
+        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
         given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
@@ -147,6 +152,7 @@ public class BigQueryLogEntryServiceTest {
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
+        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
         given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
@@ -172,6 +178,7 @@ public class BigQueryLogEntryServiceTest {
 
         String expectedQuery = null;
         given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
+        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
         given(bigQueryService.getQueryResults(PROJECT_ID, job)).willReturn(rows);
@@ -194,6 +201,7 @@ public class BigQueryLogEntryServiceTest {
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = null;
+        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
         given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
@@ -218,6 +226,7 @@ public class BigQueryLogEntryServiceTest {
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = "";
+        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
         given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
@@ -241,6 +250,7 @@ public class BigQueryLogEntryServiceTest {
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = "";
+        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
         given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
@@ -264,6 +274,7 @@ public class BigQueryLogEntryServiceTest {
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
+        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
         given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(null);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
@@ -287,6 +298,7 @@ public class BigQueryLogEntryServiceTest {
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
+        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
         given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willThrow(new IOException());
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
@@ -310,6 +322,7 @@ public class BigQueryLogEntryServiceTest {
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
+        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
         given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willThrow(new IOException());
@@ -333,6 +346,7 @@ public class BigQueryLogEntryServiceTest {
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
+        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
         given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
@@ -356,6 +370,7 @@ public class BigQueryLogEntryServiceTest {
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
+        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
         given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(null);
@@ -379,6 +394,7 @@ public class BigQueryLogEntryServiceTest {
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
+        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
         given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);

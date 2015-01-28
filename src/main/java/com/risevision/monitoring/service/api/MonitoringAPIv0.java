@@ -40,7 +40,7 @@ public class MonitoringAPIv0 {
         }
 
         AppActivityAccessor appActivityAccessor = new AppActivityAccessor();
-        Resource resource = null;
+        Resource resource;
         try {
             resource = appActivityAccessor.get(clientId, api, user);
 
