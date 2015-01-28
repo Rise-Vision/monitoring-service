@@ -41,7 +41,7 @@ public class BiqQueryLogEntryService implements LogEntryService {
 
         List<LogEntry> logEntries = null;
 
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
         String orderBy = "protoPayload.line.time ASC";
 
         String query = logEntryQueryBuilderService.buildQuery(conditional, orderBy);
@@ -59,7 +59,7 @@ public class BiqQueryLogEntryService implements LogEntryService {
     public List<LogEntry> getLogEntriesAfterDateOrderedByDate(String clientId, String api, Date lastCall) {
         List<LogEntry> logEntries = null;
 
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%' AND " +
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%' AND " +
                 "protoPayload.line.time >= '" + lastCall.getTime() + "'";
         String orderBy = "protoPayload.line.time ASC";
 

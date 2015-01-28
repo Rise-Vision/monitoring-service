@@ -79,7 +79,7 @@ public class LogEntryQueryBuilderServiceTest {
 
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
@@ -97,7 +97,7 @@ public class LogEntryQueryBuilderServiceTest {
 
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = null;
@@ -115,7 +115,7 @@ public class LogEntryQueryBuilderServiceTest {
 
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = null;
@@ -133,7 +133,7 @@ public class LogEntryQueryBuilderServiceTest {
 
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = null;

@@ -118,7 +118,7 @@ public class BigQueryLogEntryServiceTest {
     public void testGetLogEntriesOrderedByDate() throws IOException, InterruptedException {
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
@@ -143,7 +143,7 @@ public class BigQueryLogEntryServiceTest {
         Date date = new Date();
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%' AND protoPayload.line.time >= '" + date.getTime() + "'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%' AND protoPayload.line.time >= '" + date.getTime() + "'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
@@ -167,7 +167,7 @@ public class BigQueryLogEntryServiceTest {
         Date date = new Date();
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%' AND protoPayload.line.time >= '" + date.getTime() + "'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%' AND protoPayload.line.time >= '" + date.getTime() + "'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = null;
@@ -190,7 +190,7 @@ public class BigQueryLogEntryServiceTest {
     public void testGetLogEntriesOrderedByDateReturnsNullIfQueryIsNull() throws IOException, InterruptedException {
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = null;
@@ -214,7 +214,7 @@ public class BigQueryLogEntryServiceTest {
         Date date = new Date();
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%' AND protoPayload.line.time >= '" + date.getTime() + "'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%' AND protoPayload.line.time >= '" + date.getTime() + "'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = "";
@@ -237,7 +237,7 @@ public class BigQueryLogEntryServiceTest {
     public void testGetLogEntriesOrderedByDateReturnsNullIfQueryIsEmpty() throws IOException, InterruptedException {
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = "";
@@ -260,7 +260,7 @@ public class BigQueryLogEntryServiceTest {
     public void testGetLogEntriesOrderedByDateReturnsNullIfJobReferenceIsNull() throws IOException, InterruptedException {
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
@@ -283,7 +283,7 @@ public class BigQueryLogEntryServiceTest {
     public void testGetLogEntriesOrderedByDateReturnsNullIfStartQueryThrowsAnException() throws IOException, InterruptedException {
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
@@ -306,7 +306,7 @@ public class BigQueryLogEntryServiceTest {
     public void testGetLogEntriesOrderedByDateReturnsNullIfCheckQueryResultsThrowsAnIOException() throws IOException, InterruptedException {
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
@@ -329,7 +329,7 @@ public class BigQueryLogEntryServiceTest {
     public void testGetLogEntriesOrderedByDateReturnsNullIfGetQueryResultsThrowsAnIOException() throws IOException, InterruptedException {
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
@@ -352,7 +352,7 @@ public class BigQueryLogEntryServiceTest {
     public void testGetLogEntriesOrderedByDateReturnsNullIfJobIsNull() throws IOException, InterruptedException {
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
@@ -375,7 +375,7 @@ public class BigQueryLogEntryServiceTest {
     public void testGetLogEntriesOrderedByDateReturnsNullIfRowsIsNull() throws IOException, InterruptedException {
         String clientId = "xxxxxxxxxxx";
         String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like '%Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
+        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
         String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = getExpectedQuery(conditional, orderBy);
