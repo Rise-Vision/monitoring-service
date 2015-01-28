@@ -99,7 +99,7 @@ public class BiqQueryLogEntryService implements LogEntryService {
                     logEntries.add(logEntry);
                 }
             } else {
-                logger.log(Level.WARNING, "LogEntries could not be retrieve from Big Query. \n Cause: Query Result are null or empty");
+                logger.log(Level.INFO, "LogEntries could not be retrieve from Big Query. \n Cause: Query Result are null or empty");
             }
         } catch (Exception exception) {
             logger.log(Level.WARNING, "LogEntries could not be retrieve from Big Query.", exception);
