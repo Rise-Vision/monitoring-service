@@ -51,8 +51,8 @@ public class BigQueryLogEntryServiceTest {
         jobReference = new JobReference();
         job = new Job();
 
-        rows = new LinkedList<TableRow>();
-        logEntries = new LinkedList<LogEntry>();
+        rows = new LinkedList<>();
+        logEntries = new LinkedList<>();
 
         for (int i = 0; i < 10; i++) {
 
@@ -66,7 +66,7 @@ public class BigQueryLogEntryServiceTest {
     }
 
 
-    private LogEntry getLogEntry() throws ParseException {
+    private LogEntry getLogEntry() {
         LogEntry logEntry = new LogEntry();
         logEntry.setIp("1.1.1.1");
         logEntry.setHost("test.com");
@@ -80,7 +80,7 @@ public class BigQueryLogEntryServiceTest {
 
     private List<TableCell> getCells(LogEntry logEntry) {
 
-        List<TableCell> cells = new LinkedList<TableCell>();
+        List<TableCell> cells = new LinkedList<>();
 
         TableCell cell1 = new TableCell();
         cell1.setV(logEntry.getIp());
@@ -108,14 +108,12 @@ public class BigQueryLogEntryServiceTest {
 
     private String getExpectedQuery(String conditional, String orderBy) {
 
-        String query = "SELECT protoPayload.ip, protoPayload.host, protoPayload.resource, protoPayload.line.logMessage, protoPayload.line.time FROM " +
+        return "SELECT protoPayload.ip, protoPayload.host, protoPayload.resource, protoPayload.line.logMessage, protoPayload.line.time FROM " +
                 "[table]" +
                 " WHERE " +
                 conditional +
                 " ORDER BY " +
                 orderBy;
-
-        return query;
     }
 
     @Test

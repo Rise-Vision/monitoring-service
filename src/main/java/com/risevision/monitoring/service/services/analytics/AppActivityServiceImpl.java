@@ -9,7 +9,6 @@ import com.risevision.monitoring.service.services.storage.bigquery.entities.LogE
 import com.risevision.monitoring.service.services.storage.datastore.DatastoreService;
 import com.risevision.monitoring.service.services.storage.datastore.entities.AppActivityEntity;
 
-import javax.xml.bind.ValidationException;
 import java.util.Date;
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class AppActivityServiceImpl implements AppActivityService {
 
 
     @Override
-    public AppActivityEntity getActivity(String clientId, String api, User user) throws ValidationException {
+    public AppActivityEntity getActivity(String clientId, String api, User user) {
 
         Date daysAgoDate = dateService.getDaysAgoDate(NUMBER_OF_DAYS);
 

@@ -39,8 +39,8 @@ public class LogEntryQueryBuilderServiceTest {
 
         logEntryQueryBuilderService = new LogEntryQueryBuilderService(bigQueryService, projectId, datasetId);
 
-        tables = new LinkedList<TableList.Tables>();
-        tableIds = new LinkedList<String>();
+        tables = new LinkedList<>();
+        tableIds = new LinkedList<>();
 
 
         for (int i = 0; i < 10; i++) {
@@ -64,14 +64,12 @@ public class LogEntryQueryBuilderServiceTest {
             ids += "[" + datasetId + "." + id + "],";
         }
 
-        String query = "SELECT protoPayload.ip, protoPayload.host, protoPayload.resource, protoPayload.line.logMessage, protoPayload.line.time FROM " +
+        return "SELECT protoPayload.ip, protoPayload.host, protoPayload.resource, protoPayload.line.logMessage, protoPayload.line.time FROM " +
                 ids +
                 " WHERE " +
                 conditional +
                 " ORDER BY " +
                 orderBy;
-
-        return query;
     }
 
     @Test

@@ -33,7 +33,7 @@ public class MonitoringAPIv0 {
             httpMethod = ApiMethod.HttpMethod.GET
     )
     public Resource getActivity(@Named("clientId") String clientId, @Named("api") String api,
-                                User user) throws ServiceException, ValidationException {
+                                User user) throws ServiceException {
 
         if (user == null) {
             throw new UnauthorizedException("User is not authenticated");

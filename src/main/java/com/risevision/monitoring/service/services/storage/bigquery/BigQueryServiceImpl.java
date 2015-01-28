@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 public class BigQueryServiceImpl implements BigQueryService {
 
 
-    protected final Logger log = Logger.getAnonymousLogger();
+    private final Logger log = Logger.getAnonymousLogger();
     private final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
     private final JsonFactory JSON_FACTORY = new GsonFactory();
     private final List<String> BIGQUERY_SCOPE = Arrays.asList(BigqueryScopes.BIGQUERY);
