@@ -19,7 +19,7 @@ public class BiqQueryLogEntryService implements LogEntryService {
     private final Logger logger = Logger.getLogger(BiqQueryLogEntryService.class.getName());
 
 
-    private final String PROJECT_ID = "rvaserver2";
+    private final String PROJECT_ID = "rvacore-test";
     private final String DATASET_ID = "appengine_logs";
 
     private BigQueryService bigQueryService;
@@ -92,7 +92,10 @@ public class BiqQueryLogEntryService implements LogEntryService {
                     logEntry.setHost((String) row.getF().get(1).getV());
                     logEntry.setResource((String) row.getF().get(2).getV());
                     logEntry.setLogMessage((String) row.getF().get(3).getV());
-                    logEntry.setTime((Date) row.getF().get(4).getV());
+
+                    Double timestamp = Double.parseDouble((String) row.getF().get(4).getV());
+                    logEntry.setTime(new Date(timestamp.longValue()));
+
                     logEntries.add(logEntry);
                 }
             } else {

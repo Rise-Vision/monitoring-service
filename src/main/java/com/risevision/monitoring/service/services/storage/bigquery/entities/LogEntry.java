@@ -64,7 +64,7 @@ public class LogEntry {
         if (ip != null ? !ip.equals(logEntry.ip) : logEntry.ip != null) return false;
         if (logMessage != null ? !logMessage.equals(logEntry.logMessage) : logEntry.logMessage != null) return false;
         if (resource != null ? !resource.equals(logEntry.resource) : logEntry.resource != null) return false;
-        if (time != null ? !time.equals(logEntry.time) : logEntry.time != null) return false;
+        if (time != null ? time.compareTo(logEntry.time) != 0 : logEntry.time != null) return false;
 
         return true;
     }

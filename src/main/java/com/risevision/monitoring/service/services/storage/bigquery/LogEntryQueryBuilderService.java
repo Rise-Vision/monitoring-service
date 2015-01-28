@@ -34,7 +34,7 @@ public class LogEntryQueryBuilderService implements QueryBuilderService {
             if (tables != null && tables.size() > 0) {
                 String tableIdsForTheQuery = "";
                 for (TableList.Tables table : tables) {
-                    tableIdsForTheQuery += "[" + table.getTableReference().getTableId() + "],";
+                    tableIdsForTheQuery += "[" + datasetId + "." + table.getTableReference().getTableId() + "],";
                 }
 
                 query = "SELECT " +

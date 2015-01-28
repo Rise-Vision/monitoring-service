@@ -61,7 +61,7 @@ public class LogEntryQueryBuilderServiceTest {
 
         String ids = "";
         for (String id : tableIds) {
-            ids += "[" + id + "],";
+            ids += "[" + datasetId + "." + id + "],";
         }
 
         String query = "SELECT protoPayload.ip, protoPayload.host, protoPayload.resource, protoPayload.line.logMessage, protoPayload.line.time FROM " +

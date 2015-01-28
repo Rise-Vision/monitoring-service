@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.verify;
  */
 public class BigQueryLogEntryServiceTest {
 
-    private final String PROJECT_ID = "rvaserver2";
+    private final String PROJECT_ID = "rvacore-test";
     List<LogEntry> logEntries;
     @Mock
     private BigQueryService bigQueryService;
@@ -39,7 +40,7 @@ public class BigQueryLogEntryServiceTest {
     private LogEntryService bigQueryLogEntryService;
 
     @Before
-    public void setup() {
+    public void setup() throws ParseException {
         MockitoAnnotations.initMocks(this);
         bigQueryLogEntryService = new BiqQueryLogEntryService(bigQueryService, queryBuilderService);
 
@@ -61,7 +62,7 @@ public class BigQueryLogEntryServiceTest {
     }
 
 
-    private LogEntry getLogEntry() {
+    private LogEntry getLogEntry() throws ParseException {
         LogEntry logEntry = new LogEntry();
         logEntry.setIp("1.1.1.1");
         logEntry.setHost("test.com");
@@ -94,7 +95,7 @@ public class BigQueryLogEntryServiceTest {
         cells.add(cell4);
 
         TableCell cell5 = new TableCell();
-        cell5.setV(logEntry.getTime());
+        cell5.setV(String.valueOf(logEntry.getTime().getTime()));
         cells.add(cell5);
 
 
@@ -135,6 +136,7 @@ public class BigQueryLogEntryServiceTest {
 
         assertThat(actualLogEntries, is(this.logEntries));
     }
+
 
     @Test
     public void testGetLogEntriesAfterDateOrderedByDate() throws IOException, InterruptedException {

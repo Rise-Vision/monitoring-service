@@ -26,7 +26,7 @@ public class AppActivityServiceImpl implements AppActivityService {
 
     public AppActivityServiceImpl() {
         logEntryService = new BiqQueryLogEntryService();
-        datastoreService.getInstance();
+        datastoreService = datastoreService.getInstance();
         dateService = new DateServiceImpl();
     }
 
