@@ -1,6 +1,7 @@
 package com.risevision.monitoring.service.api.accessors;
 
 import com.google.api.server.spi.ServiceException;
+import com.google.appengine.api.users.User;
 import com.risevision.monitoring.service.api.resources.AppActivity;
 import com.risevision.monitoring.service.services.analytics.AppActivityService;
 import com.risevision.monitoring.service.services.storage.datastore.entities.AppActivityEntity;
@@ -27,6 +28,8 @@ public class AppActivityAccessorTest {
     @Mock
     private AppActivityEntity appActivityEntity;
 
+    private User user;
+
     private AppActivityAccessor appActivityAccessor;
     private String api;
     private String clientId;
@@ -37,15 +40,17 @@ public class AppActivityAccessorTest {
         appActivityAccessor = new AppActivityAccessor(appActivityService);
         api = "CoreAPIv1";
         clientId = "xxxxxxxxxxx";
+        user = new User("example@gmail.com", "authDomain");
+
     }
 
     @Test
     public void testGetAppActivityForAnAPIAndAClientId() throws ServiceException, ValidationException, IOException, InterruptedException {
-        given(appActivityService.getActivity(clientId, api)).willReturn(appActivityEntity);
+        given(appActivityService.getActivity(clientId, api, user)).willReturn(appActivityEntity);
 
-        AppActivity response = appActivityAccessor.get(clientId, api);
+        AppActivity response = appActivityAccessor.get(clientId, api, user);
 
-        verify(appActivityService).getActivity(clientId, api);
+        verify(appActivityService).getActivity(clientId, api, user);
 
         assertThat(clientId, is(response.getClientId()));
         assertThat(api, is(response.getApi()));

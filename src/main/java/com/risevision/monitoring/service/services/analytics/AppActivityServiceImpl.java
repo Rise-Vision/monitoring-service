@@ -1,5 +1,6 @@
 package com.risevision.monitoring.service.services.analytics;
 
+import com.google.appengine.api.users.User;
 import com.risevision.monitoring.service.services.date.DateService;
 import com.risevision.monitoring.service.services.date.DateServiceImpl;
 import com.risevision.monitoring.service.services.storage.bigquery.BiqQueryLogEntryService;
@@ -38,7 +39,7 @@ public class AppActivityServiceImpl implements AppActivityService {
 
 
     @Override
-    public AppActivityEntity getActivity(String clientId, String api) throws ValidationException {
+    public AppActivityEntity getActivity(String clientId, String api, User user) throws ValidationException {
 
         Date daysAgoDate = dateService.getDaysAgoDate(NUMBER_OF_DAYS);
 
@@ -54,6 +55,7 @@ public class AppActivityServiceImpl implements AppActivityService {
                 appActivityEntity.setFirstCall(firstCall);
 
                 getLastCallAndAverageCallsFromLogEntries(logEntries, appActivityEntity, daysAgoDate);
+                appActivityEntity.setChangedBy(user.getEmail());
                 datastoreService.put(appActivityEntity);
             }
 
@@ -76,6 +78,7 @@ public class AppActivityServiceImpl implements AppActivityService {
 
                 }
             }
+            appActivityEntity.setChangedBy(user.getEmail());
             datastoreService.put(appActivityEntity);
         }
 

@@ -6,6 +6,7 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.config.Named;
 import com.google.api.server.spi.response.BadRequestException;
+import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.users.User;
 import com.risevision.monitoring.service.api.accessors.AppActivityAccessor;
 import com.risevision.monitoring.service.api.resources.Resource;
@@ -32,10 +33,14 @@ public class MonitoringAPIv0 {
     public Resource getActivity(@Named("clientId") String clientId, @Named("api") String api,
                                 User user) throws ServiceException, ValidationException {
 
+        if (user == null) {
+            throw new UnauthorizedException("User is not authenticated");
+        }
+
         AppActivityAccessor appActivityAccessor = new AppActivityAccessor();
         Resource resource = null;
         try {
-            resource = appActivityAccessor.get(clientId, api);
+            resource = appActivityAccessor.get(clientId, api, user);
 
         } catch (ValidationException exception) {
             throw new BadRequestException(exception);

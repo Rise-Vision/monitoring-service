@@ -1,6 +1,7 @@
 package com.risevision.monitoring.service.api.accessors;
 
 import com.google.api.server.spi.ServiceException;
+import com.google.appengine.api.users.User;
 import com.risevision.monitoring.service.api.resources.AppActivity;
 import com.risevision.monitoring.service.services.analytics.AppActivityService;
 import org.junit.Before;
@@ -29,7 +30,11 @@ public class AppActivityAccessorInvalidCasesTest {
     public String clientId;
     @Mock
     private AppActivityService appActivityService;
+
+    private User user;
+
     private AppActivityAccessor appActivityAccessor;
+
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -52,12 +57,13 @@ public class AppActivityAccessorInvalidCasesTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         appActivityAccessor = new AppActivityAccessor(appActivityService);
+        user = new User("example@gmail.com", "authDomain");
     }
 
     @Test(expected = ValidationException.class)
     public void test() throws ServiceException, ValidationException {
 
-        AppActivity response = appActivityAccessor.get(clientId, api);
+        AppActivity response = appActivityAccessor.get(clientId, api, user);
 
     }
 

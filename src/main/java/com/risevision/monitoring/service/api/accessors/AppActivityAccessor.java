@@ -1,6 +1,7 @@
 package com.risevision.monitoring.service.api.accessors;
 
 import com.google.api.server.spi.ServiceException;
+import com.google.appengine.api.users.User;
 import com.risevision.monitoring.service.api.resources.AppActivity;
 import com.risevision.monitoring.service.services.analytics.AppActivityService;
 import com.risevision.monitoring.service.services.analytics.AppActivityServiceImpl;
@@ -24,7 +25,7 @@ public class AppActivityAccessor {
         this.appActivityService = appActivityService;
     }
 
-    public AppActivity get(String clientId, String api) throws ServiceException, ValidationException {
+    public AppActivity get(String clientId, String api, User user) throws ServiceException, ValidationException {
 
         if (clientId == null || clientId.isEmpty()) {
             throw new ValidationException("Client Id cannot be null or empty.");
@@ -36,7 +37,7 @@ public class AppActivityAccessor {
 
         AppActivity appActivity;
 
-        AppActivityEntity appActivityEntity = appActivityService.getActivity(clientId, api);
+        AppActivityEntity appActivityEntity = appActivityService.getActivity(clientId, api, user);
 
         if (appActivityEntity != null) {
             appActivity = new AppActivity(clientId, api, appActivityEntity.getFirstCall(), appActivityEntity.getLastCall(), appActivityEntity.getAvgCallsPerDay());

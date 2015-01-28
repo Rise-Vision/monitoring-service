@@ -1,5 +1,6 @@
 package com.risevision.monitoring.service.services.analytics;
 
+import com.google.appengine.api.users.User;
 import com.risevision.monitoring.service.services.storage.datastore.entities.AppActivityEntity;
 
 import javax.xml.bind.ValidationException;
@@ -9,5 +10,5 @@ import javax.xml.bind.ValidationException;
  */
 public interface AppActivityService {
 
-    public AppActivityEntity getActivity(String clientId, String api) throws ValidationException;
+    public AppActivityEntity getActivity(String clientId, String api, User user) throws ValidationException;
 }
