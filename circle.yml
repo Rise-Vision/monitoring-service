@@ -1,19 +1,19 @@
-  cache_directories:
-    - /home/ubuntu/nvm
-  post:
-    - mvn install
-    - pwd && mvn appengine:devserver_start:
-        background: true 
+cache_directories:
+  - /home/ubuntu/nvm
+post:
+  - mvn install
+  - pwd && mvn appengine:devserver_start:
+      background: true
 
 deployment:
-  staging:
-    branch: /(feature|hotfix|fix|chore).*/
-    commands:
-      - mvn appengine:update -Dappengine.version=$(echo -n $CIRCLE_BRANCH |awk 'BEGIN{FS="/"}{print tolower($NF)}') -Dappengine.appId=rvacore-test <<< $JENKINS_PASS
+staging:
+  branch: /(feature|hotfix|fix|chore).*/
+  commands:
+    - mvn appengine:update -Dappengine.version=$(echo -n $CIRCLE_BRANCH |awk 'BEGIN{FS="/"}{print tolower($NF)}') -Dappengine.appId=rvacore-test <<< $JENKINS_PASS
 #      - mvn appengine:set_default_version -Dappengine.version=$(echo -n $CIRCLE_BRANCH |awk 'BEGIN{FS="/"}{print tolower($NF)}') -Dappengine.appId=rvacore-test <<< $JENKINS_PASS
-  production:
-    branch: master
-    commands:
-      - mvn clean install
-      - mvn appengine:update -Dappengine.version=r$(echo -n $((CIRCLE_BUILD_NUM%10))) -Dappengine.appId=rvaserver2 <<< $JENKINS_PASS
-      - mvn appengine:set_default_version -Dappengine.version=r$(echo -n $((CIRCLE_BUILD_NUM%10))) -Dappengine.appId=rvaserver2 <<< $JENKINS_PASS
+production:
+  branch: master
+  commands:
+    - mvn clean install
+    - mvn appengine:update -Dappengine.version=r$(echo -n $((CIRCLE_BUILD_NUM%10))) -Dappengine.appId=rvaserver2 <<< $JENKINS_PASS
+    - mvn appengine:set_default_version -Dappengine.version=r$(echo -n $((CIRCLE_BUILD_NUM%10))) -Dappengine.appId=rvaserver2 <<< $JENKINS_PASS
