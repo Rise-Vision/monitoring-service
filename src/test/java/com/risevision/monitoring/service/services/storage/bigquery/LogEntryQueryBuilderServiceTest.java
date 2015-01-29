@@ -29,6 +29,10 @@ public class LogEntryQueryBuilderServiceTest {
 
     private List<TableList.Tables> tables;
     private List<String> tableIds;
+    private String clientId;
+    private String api;
+    private String conditionalWithAPIAndClientId;
+    private String orderBy; 
 
 
     @Before
@@ -55,9 +59,14 @@ public class LogEntryQueryBuilderServiceTest {
             tables.add(table);
 
         }
+
+        clientId = "xxxxxxxxxxx";
+        api = "CoreAPIv1";
+        conditionalWithAPIAndClientId = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"%'";
+        orderBy = "protoPayload.line.time ASC";
     }
 
-    private String getExpectedQuery(String conditional, String orderBy) {
+    private String getExpectedQuery(String conditionalWithAPIAndClientId, String orderBy) {
 
         String ids = "";
         for (String id : tableIds) {
@@ -67,7 +76,7 @@ public class LogEntryQueryBuilderServiceTest {
         return "SELECT protoPayload.ip, protoPayload.host, protoPayload.resource, protoPayload.line.logMessage, protoPayload.line.time FROM " +
                 ids +
                 " WHERE " +
-                conditional +
+                conditionalWithAPIAndClientId +
                 " ORDER BY " +
                 orderBy;
     }
@@ -75,17 +84,11 @@ public class LogEntryQueryBuilderServiceTest {
     @Test
     public void testBuildQuery() throws IOException {
 
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
-        String orderBy = "protoPayload.line.time ASC";
-
-        String expectedQuery = getExpectedQuery(conditional, orderBy);
-
+        String expectedQuery = getExpectedQuery(conditionalWithAPIAndClientId, orderBy);
 
         given(bigQueryService.listTables(projectId, datasetId)).willReturn(tables);
 
-        String actualQuery = logEntryQueryBuilderService.buildQuery(conditional, orderBy);
+        String actualQuery = logEntryQueryBuilderService.buildQuery(conditionalWithAPIAndClientId, orderBy);
 
         assertThat(actualQuery, is(expectedQuery));
     }
@@ -93,17 +96,11 @@ public class LogEntryQueryBuilderServiceTest {
     @Test
     public void testBuildQueryReturnNullIfTableListCannotBeRetrieved() throws IOException {
 
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
-        String orderBy = "protoPayload.line.time ASC";
-
         String expectedQuery = null;
-
 
         given(bigQueryService.listTables(projectId, datasetId)).willReturn(null);
 
-        String actualQuery = logEntryQueryBuilderService.buildQuery(conditional, orderBy);
+        String actualQuery = logEntryQueryBuilderService.buildQuery(conditionalWithAPIAndClientId, orderBy);
 
         assertThat(actualQuery, is(expectedQuery));
     }
@@ -111,17 +108,11 @@ public class LogEntryQueryBuilderServiceTest {
     @Test
     public void testBuildQueryReturnNullIfTableListIsEmpty() throws IOException {
 
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
-        String orderBy = "protoPayload.line.time ASC";
-
         String expectedQuery = null;
-
 
         given(bigQueryService.listTables(projectId, datasetId)).willReturn(new LinkedList<TableList.Tables>());
 
-        String actualQuery = logEntryQueryBuilderService.buildQuery(conditional, orderBy);
+        String actualQuery = logEntryQueryBuilderService.buildQuery(conditionalWithAPIAndClientId, orderBy);
 
         assertThat(actualQuery, is(expectedQuery));
     }
@@ -129,17 +120,11 @@ public class LogEntryQueryBuilderServiceTest {
     @Test
     public void testBuildQueryReturnNullIfExceptionIsThrown() throws IOException {
 
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
-        String orderBy = "protoPayload.line.time ASC";
-
         String expectedQuery = null;
-
 
         given(bigQueryService.listTables(projectId, datasetId)).willThrow(new IOException());
 
-        String actualQuery = logEntryQueryBuilderService.buildQuery(conditional, orderBy);
+        String actualQuery = logEntryQueryBuilderService.buildQuery(conditionalWithAPIAndClientId, orderBy);
 
         assertThat(actualQuery, is(expectedQuery));
     }

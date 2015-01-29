@@ -42,6 +42,12 @@ public class BigQueryLogEntryServiceTest {
     private Job job;
     private List<TableRow> rows;
     private LogEntryService bigQueryLogEntryService;
+    private String clientId;
+    private String api;
+    private Date date;
+    private String conditionalWithAPIAndClientId;
+    private String conditionalWithAPIClientIdAndDate;
+    private String orderBy;
 
     @Before
     public void setup() throws ParseException {
@@ -63,6 +69,16 @@ public class BigQueryLogEntryServiceTest {
             row.setF(getCells(logEntry));
             rows.add(row);
         }
+
+
+        clientId = "xxxxxxxxxxx";
+        api = "CoreAPIv1";
+        date = new Date();
+        conditionalWithAPIAndClientId = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"%'";
+        conditionalWithAPIClientIdAndDate = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"%' AND protoPayload.line.time >= '" + date.getTime() + "'";
+        orderBy = "protoPayload.line.time ASC";
+
+        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
     }
 
 
@@ -118,21 +134,18 @@ public class BigQueryLogEntryServiceTest {
 
     @Test
     public void testGetLogEntriesOrderedByDate() throws IOException, InterruptedException {
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
-        String orderBy = "protoPayload.line.time ASC";
 
-        String expectedQuery = getExpectedQuery(conditional, orderBy);
-        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
-        given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
+
+        String expectedQuery = getExpectedQuery(conditionalWithAPIAndClientId, orderBy);
+
+        given(queryBuilderService.buildQuery(conditionalWithAPIAndClientId, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
         given(bigQueryService.getQueryResults(PROJECT_ID, job)).willReturn(rows);
 
         List<LogEntry> actualLogEntries = bigQueryLogEntryService.getLogEntriesOrderedByDate(clientId, api);
 
-        verify(queryBuilderService).buildQuery(conditional, orderBy);
+        verify(queryBuilderService).buildQuery(conditionalWithAPIAndClientId, orderBy);
         verify(bigQueryService).startQuery(expectedQuery, PROJECT_ID);
         verify(bigQueryService).checkQueryResults(PROJECT_ID, jobReference);
         verify(bigQueryService).getQueryResults(PROJECT_ID, job);
@@ -143,22 +156,16 @@ public class BigQueryLogEntryServiceTest {
 
     @Test
     public void testGetLogEntriesAfterDateOrderedByDate() throws IOException, InterruptedException {
-        Date date = new Date();
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%' AND protoPayload.line.time >= '" + date.getTime() + "'";
-        String orderBy = "protoPayload.line.time ASC";
 
-        String expectedQuery = getExpectedQuery(conditional, orderBy);
-        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
-        given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
+        String expectedQuery = getExpectedQuery(conditionalWithAPIClientIdAndDate, orderBy);
+        given(queryBuilderService.buildQuery(conditionalWithAPIClientIdAndDate, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
         given(bigQueryService.getQueryResults(PROJECT_ID, job)).willReturn(rows);
 
         List<LogEntry> actualLogEntries = bigQueryLogEntryService.getLogEntriesAfterDateOrderedByDate(clientId, api, date);
 
-        verify(queryBuilderService).buildQuery(conditional, orderBy);
+        verify(queryBuilderService).buildQuery(conditionalWithAPIClientIdAndDate, orderBy);
         verify(bigQueryService).startQuery(expectedQuery, PROJECT_ID);
         verify(bigQueryService).checkQueryResults(PROJECT_ID, jobReference);
         verify(bigQueryService).getQueryResults(PROJECT_ID, job);
@@ -168,22 +175,16 @@ public class BigQueryLogEntryServiceTest {
 
     @Test
     public void testGetLogEntriesAfterDateOrderedByDateReturnsNullIfQueryIsNull() throws IOException, InterruptedException {
-        Date date = new Date();
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%' AND protoPayload.line.time >= '" + date.getTime() + "'";
-        String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = null;
-        given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
-        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
+        given(queryBuilderService.buildQuery(conditionalWithAPIClientIdAndDate, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
         given(bigQueryService.getQueryResults(PROJECT_ID, job)).willReturn(rows);
 
         List<LogEntry> actualLogEntries = bigQueryLogEntryService.getLogEntriesAfterDateOrderedByDate(clientId, api, date);
 
-        verify(queryBuilderService).buildQuery(conditional, orderBy);
+        verify(queryBuilderService).buildQuery(conditionalWithAPIClientIdAndDate, orderBy);
         verify(bigQueryService, never()).startQuery(expectedQuery, PROJECT_ID);
         verify(bigQueryService, never()).checkQueryResults(PROJECT_ID, jobReference);
         verify(bigQueryService, never()).getQueryResults(PROJECT_ID, job);
@@ -193,21 +194,16 @@ public class BigQueryLogEntryServiceTest {
 
     @Test
     public void testGetLogEntriesOrderedByDateReturnsNullIfQueryIsNull() throws IOException, InterruptedException {
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
-        String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = null;
-        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
-        given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
+        given(queryBuilderService.buildQuery(conditionalWithAPIAndClientId, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
         given(bigQueryService.getQueryResults(PROJECT_ID, job)).willReturn(rows);
 
         List<LogEntry> actualLogEntries = bigQueryLogEntryService.getLogEntriesOrderedByDate(clientId, api);
 
-        verify(queryBuilderService).buildQuery(conditional, orderBy);
+        verify(queryBuilderService).buildQuery(conditionalWithAPIAndClientId, orderBy);
         verify(bigQueryService, never()).startQuery(expectedQuery, PROJECT_ID);
         verify(bigQueryService, never()).checkQueryResults(PROJECT_ID, jobReference);
         verify(bigQueryService, never()).getQueryResults(PROJECT_ID, job);
@@ -217,22 +213,16 @@ public class BigQueryLogEntryServiceTest {
 
     @Test
     public void testGetLogEntriesAfterDateOrderedByDateReturnsNullIfQueryIsEmpty() throws IOException, InterruptedException {
-        Date date = new Date();
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%' AND protoPayload.line.time >= '" + date.getTime() + "'";
-        String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = "";
-        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
-        given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
+        given(queryBuilderService.buildQuery(conditionalWithAPIClientIdAndDate, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
         given(bigQueryService.getQueryResults(PROJECT_ID, job)).willReturn(rows);
 
         List<LogEntry> actualLogEntries = bigQueryLogEntryService.getLogEntriesAfterDateOrderedByDate(clientId, api, date);
 
-        verify(queryBuilderService).buildQuery(conditional, orderBy);
+        verify(queryBuilderService).buildQuery(conditionalWithAPIClientIdAndDate, orderBy);
         verify(bigQueryService, never()).startQuery(expectedQuery, PROJECT_ID);
         verify(bigQueryService, never()).checkQueryResults(PROJECT_ID, jobReference);
         verify(bigQueryService, never()).getQueryResults(PROJECT_ID, job);
@@ -242,21 +232,16 @@ public class BigQueryLogEntryServiceTest {
 
     @Test
     public void testGetLogEntriesOrderedByDateReturnsNullIfQueryIsEmpty() throws IOException, InterruptedException {
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
-        String orderBy = "protoPayload.line.time ASC";
 
         String expectedQuery = "";
-        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
-        given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
+        given(queryBuilderService.buildQuery(conditionalWithAPIAndClientId, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
         given(bigQueryService.getQueryResults(PROJECT_ID, job)).willReturn(rows);
 
         List<LogEntry> actualLogEntries = bigQueryLogEntryService.getLogEntriesOrderedByDate(clientId, api);
 
-        verify(queryBuilderService).buildQuery(conditional, orderBy);
+        verify(queryBuilderService).buildQuery(conditionalWithAPIAndClientId, orderBy);
         verify(bigQueryService, never()).startQuery(expectedQuery, PROJECT_ID);
         verify(bigQueryService, never()).checkQueryResults(PROJECT_ID, jobReference);
         verify(bigQueryService, never()).getQueryResults(PROJECT_ID, job);
@@ -266,21 +251,16 @@ public class BigQueryLogEntryServiceTest {
 
     @Test
     public void testGetLogEntriesOrderedByDateReturnsNullIfJobReferenceIsNull() throws IOException, InterruptedException {
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
-        String orderBy = "protoPayload.line.time ASC";
 
-        String expectedQuery = getExpectedQuery(conditional, orderBy);
-        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
-        given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
+        String expectedQuery = getExpectedQuery(conditionalWithAPIAndClientId, orderBy);
+        given(queryBuilderService.buildQuery(conditionalWithAPIAndClientId, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(null);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
         given(bigQueryService.getQueryResults(PROJECT_ID, job)).willReturn(rows);
 
         List<LogEntry> actualLogEntries = bigQueryLogEntryService.getLogEntriesOrderedByDate(clientId, api);
 
-        verify(queryBuilderService).buildQuery(conditional, orderBy);
+        verify(queryBuilderService).buildQuery(conditionalWithAPIAndClientId, orderBy);
         verify(bigQueryService).startQuery(expectedQuery, PROJECT_ID);
         verify(bigQueryService, never()).checkQueryResults(PROJECT_ID, jobReference);
         verify(bigQueryService, never()).getQueryResults(PROJECT_ID, job);
@@ -290,21 +270,16 @@ public class BigQueryLogEntryServiceTest {
 
     @Test
     public void testGetLogEntriesOrderedByDateReturnsNullIfStartQueryThrowsAnException() throws IOException, InterruptedException {
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
-        String orderBy = "protoPayload.line.time ASC";
 
-        String expectedQuery = getExpectedQuery(conditional, orderBy);
-        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
-        given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
+        String expectedQuery = getExpectedQuery(conditionalWithAPIAndClientId, orderBy);
+        given(queryBuilderService.buildQuery(conditionalWithAPIAndClientId, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willThrow(new IOException());
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
         given(bigQueryService.getQueryResults(PROJECT_ID, job)).willReturn(rows);
 
         List<LogEntry> actualLogEntries = bigQueryLogEntryService.getLogEntriesOrderedByDate(clientId, api);
 
-        verify(queryBuilderService).buildQuery(conditional, orderBy);
+        verify(queryBuilderService).buildQuery(conditionalWithAPIAndClientId, orderBy);
         verify(bigQueryService).startQuery(expectedQuery, PROJECT_ID);
         verify(bigQueryService, never()).checkQueryResults(PROJECT_ID, jobReference);
         verify(bigQueryService, never()).getQueryResults(PROJECT_ID, job);
@@ -314,21 +289,16 @@ public class BigQueryLogEntryServiceTest {
 
     @Test
     public void testGetLogEntriesOrderedByDateReturnsNullIfCheckQueryResultsThrowsAnIOException() throws IOException, InterruptedException {
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
-        String orderBy = "protoPayload.line.time ASC";
 
-        String expectedQuery = getExpectedQuery(conditional, orderBy);
-        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
-        given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
+        String expectedQuery = getExpectedQuery(conditionalWithAPIAndClientId, orderBy);
+        given(queryBuilderService.buildQuery(conditionalWithAPIAndClientId, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willThrow(new IOException());
         given(bigQueryService.getQueryResults(PROJECT_ID, job)).willReturn(rows);
 
         List<LogEntry> actualLogEntries = bigQueryLogEntryService.getLogEntriesOrderedByDate(clientId, api);
 
-        verify(queryBuilderService).buildQuery(conditional, orderBy);
+        verify(queryBuilderService).buildQuery(conditionalWithAPIAndClientId, orderBy);
         verify(bigQueryService).startQuery(expectedQuery, PROJECT_ID);
         verify(bigQueryService).checkQueryResults(PROJECT_ID, jobReference);
         verify(bigQueryService, never()).getQueryResults(PROJECT_ID, job);
@@ -338,21 +308,16 @@ public class BigQueryLogEntryServiceTest {
 
     @Test
     public void testGetLogEntriesOrderedByDateReturnsNullIfGetQueryResultsThrowsAnIOException() throws IOException, InterruptedException {
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
-        String orderBy = "protoPayload.line.time ASC";
 
-        String expectedQuery = getExpectedQuery(conditional, orderBy);
-        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
-        given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
+        String expectedQuery = getExpectedQuery(conditionalWithAPIAndClientId, orderBy);
+        given(queryBuilderService.buildQuery(conditionalWithAPIAndClientId, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
         given(bigQueryService.getQueryResults(PROJECT_ID, job)).willThrow(new IOException());
 
         List<LogEntry> actualLogEntries = bigQueryLogEntryService.getLogEntriesOrderedByDate(clientId, api);
 
-        verify(queryBuilderService).buildQuery(conditional, orderBy);
+        verify(queryBuilderService).buildQuery(conditionalWithAPIAndClientId, orderBy);
         verify(bigQueryService).startQuery(expectedQuery, PROJECT_ID);
         verify(bigQueryService).checkQueryResults(PROJECT_ID, jobReference);
         verify(bigQueryService).getQueryResults(PROJECT_ID, job);
@@ -362,21 +327,16 @@ public class BigQueryLogEntryServiceTest {
 
     @Test
     public void testGetLogEntriesOrderedByDateReturnsNullIfJobIsNull() throws IOException, InterruptedException {
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
-        String orderBy = "protoPayload.line.time ASC";
 
-        String expectedQuery = getExpectedQuery(conditional, orderBy);
-        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
-        given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
+        String expectedQuery = getExpectedQuery(conditionalWithAPIAndClientId, orderBy);
+        given(queryBuilderService.buildQuery(conditionalWithAPIAndClientId, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(null);
         given(bigQueryService.getQueryResults(PROJECT_ID, job)).willReturn(rows);
 
         List<LogEntry> actualLogEntries = bigQueryLogEntryService.getLogEntriesOrderedByDate(clientId, api);
 
-        verify(queryBuilderService).buildQuery(conditional, orderBy);
+        verify(queryBuilderService).buildQuery(conditionalWithAPIAndClientId, orderBy);
         verify(bigQueryService).startQuery(expectedQuery, PROJECT_ID);
         verify(bigQueryService).checkQueryResults(PROJECT_ID, jobReference);
         verify(bigQueryService, never()).getQueryResults(PROJECT_ID, job);
@@ -386,21 +346,16 @@ public class BigQueryLogEntryServiceTest {
 
     @Test
     public void testGetLogEntriesOrderedByDateReturnsNullIfRowsIsNull() throws IOException, InterruptedException {
-        String clientId = "xxxxxxxxxxx";
-        String api = "CoreAPIv1";
-        String conditional = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"}%'";
-        String orderBy = "protoPayload.line.time ASC";
 
-        String expectedQuery = getExpectedQuery(conditional, orderBy);
-        given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
-        given(queryBuilderService.buildQuery(conditional, orderBy)).willReturn(expectedQuery);
+        String expectedQuery = getExpectedQuery(conditionalWithAPIAndClientId, orderBy);
+        given(queryBuilderService.buildQuery(conditionalWithAPIAndClientId, orderBy)).willReturn(expectedQuery);
         given(bigQueryService.startQuery(expectedQuery, PROJECT_ID)).willReturn(jobReference);
         given(bigQueryService.checkQueryResults(PROJECT_ID, jobReference)).willReturn(job);
         given(bigQueryService.getQueryResults(PROJECT_ID, job)).willReturn(null);
 
         List<LogEntry> actualLogEntries = bigQueryLogEntryService.getLogEntriesOrderedByDate(clientId, api);
 
-        verify(queryBuilderService).buildQuery(conditional, orderBy);
+        verify(queryBuilderService).buildQuery(conditionalWithAPIAndClientId, orderBy);
         verify(bigQueryService).startQuery(expectedQuery, PROJECT_ID);
         verify(bigQueryService).checkQueryResults(PROJECT_ID, jobReference);
         verify(bigQueryService).getQueryResults(PROJECT_ID, job);
