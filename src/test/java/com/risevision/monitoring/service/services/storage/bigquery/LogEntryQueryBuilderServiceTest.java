@@ -62,7 +62,7 @@ public class LogEntryQueryBuilderServiceTest {
 
         clientId = "xxxxxxxxxxx";
         api = "CoreAPIv1";
-        conditionalWithAPIAndClientId = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"%'";
+        conditionalWithAPIAndClientId = "protoPayload.line.logMessage like 'com.risevision.monitoring.filter.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"%'";
         orderBy = "protoPayload.line.time ASC";
     }
 

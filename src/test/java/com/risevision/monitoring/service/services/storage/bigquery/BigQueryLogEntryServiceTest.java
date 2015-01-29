@@ -74,8 +74,8 @@ public class BigQueryLogEntryServiceTest {
         clientId = "xxxxxxxxxxx";
         api = "CoreAPIv1";
         date = new Date();
-        conditionalWithAPIAndClientId = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"%'";
-        conditionalWithAPIClientIdAndDate = "protoPayload.line.logMessage like 'com.risevision.monitor.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"%' AND protoPayload.line.time >= '" + date.getTime() + "'";
+        conditionalWithAPIAndClientId = "protoPayload.line.logMessage like 'com.risevision.monitoring.filter.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"%'";
+        conditionalWithAPIClientIdAndDate = "protoPayload.line.logMessage like 'com.risevision.monitoring.filter.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"%' AND protoPayload.line.time >= '" + date.getTime() + "'";
         orderBy = "protoPayload.line.time ASC";
 
         given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
