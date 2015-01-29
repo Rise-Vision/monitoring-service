@@ -60,7 +60,7 @@ public class BiqQueryLogEntryService implements LogEntryService {
         List<LogEntry> logEntries = null;
 
         String conditional = "protoPayload.line.logMessage like 'com.risevision.monitoring.filter.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"%' AND " +
-                "protoPayload.line.time >= '" + lastCall.getTime() + "'";
+                "protoPayload.line.time > '" + (lastCall.getTime() / 1000) + "'";
         String orderBy = "protoPayload.line.time ASC";
 
         String query = logEntryQueryBuilderService.buildQuery(conditional, orderBy);
@@ -94,8 +94,8 @@ public class BiqQueryLogEntryService implements LogEntryService {
                     logEntry.setLogMessage((String) row.getF().get(3).getV());
 
                     Double timestamp = Double.parseDouble((String) row.getF().get(4).getV());
-                    logEntry.setTime(new Date(timestamp.longValue()));
-
+                    // Multiply by 1000, since java is expecting milliseconds
+                    logEntry.setTime(new Date(timestamp.longValue() * 1000));
                     logEntries.add(logEntry);
                 }
             } else {

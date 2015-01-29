@@ -14,10 +14,10 @@ public class AppActivityEntity extends MonitoringDatastoreEntity {
     private String api;
     private Date firstCall;
     private Date lastCall;
-    private float avgCallsPerDay;
+    private double avgCallsPerDay;
 
     public AppActivityEntity() {
-        super();
+
     }
 
     public AppActivityEntity(String id) {
@@ -25,6 +25,7 @@ public class AppActivityEntity extends MonitoringDatastoreEntity {
     }
 
     public AppActivityEntity(String clientId, String api) {
+        super(api + "-" + clientId);
         this.clientId = clientId;
         this.api = api;
     }
@@ -61,11 +62,11 @@ public class AppActivityEntity extends MonitoringDatastoreEntity {
         this.lastCall = lastCall;
     }
 
-    public float getAvgCallsPerDay() {
+    public double getAvgCallsPerDay() {
         return avgCallsPerDay;
     }
 
-    public void setAvgCallsPerDay(float avgCallsPerDay) {
+    public void setAvgCallsPerDay(double avgCallsPerDay) {
         this.avgCallsPerDay = avgCallsPerDay;
     }
 }

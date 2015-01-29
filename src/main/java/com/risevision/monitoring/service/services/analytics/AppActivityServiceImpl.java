@@ -11,11 +11,15 @@ import com.risevision.monitoring.service.services.storage.datastore.entities.App
 
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by rodrigopavezi on 1/21/15.
  */
 public class AppActivityServiceImpl implements AppActivityService {
+
+    private final Logger logger = Logger.getLogger(AppActivityServiceImpl.class.getName());
+
 
     // Hardcoded the number of days for the average calculation.
     private final int NUMBER_OF_DAYS = 7;
@@ -65,7 +69,10 @@ public class AppActivityServiceImpl implements AppActivityService {
                 logEntries = logEntryService.getLogEntriesAfterDateOrderedByDate(clientId, api, daysAgoDate);
                 if (logEntries != null) {
                     appActivityEntity.setLastCall(logEntries.get(logEntries.size() - 1).getTime());
-                    appActivityEntity.setAvgCallsPerDay(logEntries.size() / NUMBER_OF_DAYS);
+                    appActivityEntity.setAvgCallsPerDay((double) logEntries.size() / (double) NUMBER_OF_DAYS);
+
+                    appActivityEntity.setChangedBy(user.getEmail());
+                    datastoreService.put(appActivityEntity);
                 }
             } else {
                 logEntries = logEntryService.getLogEntriesAfterDateOrderedByDate(clientId, api, appActivityEntity.getLastCall());
@@ -73,12 +80,13 @@ public class AppActivityServiceImpl implements AppActivityService {
                 if (logEntries != null) {
                     getLastCallAndAverageCallsFromLogEntries(logEntries, appActivityEntity, daysAgoDate);
                 } else {
-                    appActivityEntity.setAvgCallsPerDay(0.0f);
+                    appActivityEntity.setAvgCallsPerDay(0.0);
 
                 }
+
+                appActivityEntity.setChangedBy(user.getEmail());
+                datastoreService.put(appActivityEntity);
             }
-            appActivityEntity.setChangedBy(user.getEmail());
-            datastoreService.put(appActivityEntity);
         }
 
         return appActivityEntity;
@@ -94,7 +102,7 @@ public class AppActivityServiceImpl implements AppActivityService {
                 numberOfLogs++;
             }
         }
-        appActivityEntity.setAvgCallsPerDay(numberOfLogs / NUMBER_OF_DAYS);
+        appActivityEntity.setAvgCallsPerDay((double) numberOfLogs / (double) NUMBER_OF_DAYS);
     }
 
 }

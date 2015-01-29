@@ -84,8 +84,8 @@ public class AppActivityServiceTest {
 
     @Test
     public void testGetAppActivityFromDatastoreWithNoLogEntriesAfterLastCallAndNotFromTheLastSevenDays() throws ValidationException, IOException, InterruptedException {
-        float lastAvgCall = 2.5f;
-        float expectedAvgCall = 0.0f;
+        double lastAvgCall = 2.5f;
+        double expectedAvgCall = 0.0f;
 
         appActivityEntitySpy.setClientId(clientId);
         appActivityEntitySpy.setApi(api);
@@ -115,8 +115,8 @@ public class AppActivityServiceTest {
 
     @Test
     public void testGetAppActivityFromDatastoreWithLogEntriesAfterLastCallButNotFromTheLastSevenDays() throws ValidationException, IOException, InterruptedException {
-        float lastAvgCall = 2.5f;
-        float expectedAvgCall = 0.0f;
+        double lastAvgCall = 2.5f;
+        double expectedAvgCall = 0.0f;
 
         appActivityEntitySpy.setClientId(clientId);
         appActivityEntitySpy.setApi(api);
@@ -145,8 +145,8 @@ public class AppActivityServiceTest {
 
     @Test
     public void testGetAppActivityFromDatastoreWithLogEntriesAfterLastCallAndFromTheLastSevenDays() throws ValidationException, IOException, InterruptedException {
-        float lastAvgCall = 2.5f;
-        float expectedAvgCall = 1.0f;
+        double lastAvgCall = 2.5f;
+        double expectedAvgCall = 1.0f;
 
         appActivityEntitySpy.setClientId(clientId);
         appActivityEntitySpy.setApi(api);
@@ -177,8 +177,8 @@ public class AppActivityServiceTest {
 
     @Test
     public void testGetAppActivityFromDatastoreWithLogEntriesAfterLastCallAndFromTheLastSevenDaysCurrentLastCallIsAfterDaysAgoDate() throws ValidationException, IOException, InterruptedException {
-        float lastAvgCall = 2.5f;
-        float expectedAvgCall = 1.0f;
+        double lastAvgCall = 2.5f;
+        double expectedAvgCall = 1.0f;
 
         appActivityEntitySpy.setClientId(clientId);
         appActivityEntitySpy.setApi(api);
@@ -210,7 +210,7 @@ public class AppActivityServiceTest {
 
     @Test
     public void testGetAppActivityFromBigQueryWithLastSevenDaysLogEntriesAsThereIsNoRecordOnDatastore() throws ValidationException, IOException, InterruptedException {
-        float expectedAvgCall = 1.0f;
+        double expectedAvgCall = 1.0f;
 
         Calendar calendar = Calendar.getInstance();
         List<LogEntry> logEntries = getMockedLogEntries(calendar, 100);
@@ -235,7 +235,7 @@ public class AppActivityServiceTest {
 
     @Test
     public void testGetAppActivityFromBigQueryWithNoLastSevenDaysLogEntriesAsThereIsNoRecordOnDatastore() throws ValidationException, IOException, InterruptedException {
-        float expectedAvgCall = 0.0f;
+        double expectedAvgCall = 0.0f;
 
         Calendar calendar = Calendar.getInstance();
 

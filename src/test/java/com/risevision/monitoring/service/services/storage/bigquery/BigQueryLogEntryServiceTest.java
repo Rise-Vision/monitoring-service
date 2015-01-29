@@ -13,9 +13,11 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.SimpleTimeZone;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -73,9 +75,12 @@ public class BigQueryLogEntryServiceTest {
 
         clientId = "xxxxxxxxxxx";
         api = "CoreAPIv1";
-        date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.setTimeZone(new SimpleTimeZone(SimpleTimeZone.UTC_TIME, "UTC"));
+        date = sdf.parse(sdf.format(new Date()));
+
         conditionalWithAPIAndClientId = "protoPayload.line.logMessage like 'com.risevision.monitoring.filter.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"%'";
-        conditionalWithAPIClientIdAndDate = "protoPayload.line.logMessage like 'com.risevision.monitoring.filter.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"%' AND protoPayload.line.time >= '" + date.getTime() + "'";
+        conditionalWithAPIClientIdAndDate = "protoPayload.line.logMessage like 'com.risevision.monitoring.filter.MonitoringFilter doFilter: Monitoring: data={\"api\":\"" + api + "\",\"clientId\":\"" + clientId + "\"%' AND protoPayload.line.time > '" + date.getTime() / 1000 + "'";
         orderBy = "protoPayload.line.time ASC";
 
         given(options.getPROJECT_ID()).willReturn(PROJECT_ID);
@@ -87,7 +92,8 @@ public class BigQueryLogEntryServiceTest {
         logEntry.setIp("1.1.1.1");
         logEntry.setHost("test.com");
         logEntry.setResource("/test/test");
-        logEntry.setTime(new Date());
+        Double timestamp = Double.parseDouble(String.valueOf((double) (new Date().getTime() / 1000)));
+        logEntry.setTime(new Date(timestamp.longValue() * 1000));
         logEntry.setLogMessage("message");
 
         return logEntry;
@@ -115,7 +121,7 @@ public class BigQueryLogEntryServiceTest {
         cells.add(cell4);
 
         TableCell cell5 = new TableCell();
-        cell5.setV(String.valueOf(logEntry.getTime().getTime()));
+        cell5.setV(String.valueOf((double) (logEntry.getTime().getTime() / 1000)));
         cells.add(cell5);
 
 

@@ -2,15 +2,15 @@ package com.risevision.monitoring.service.api.resources;
 
 import java.util.Date;
 
-public class AppActivity extends Resource{
+public class AppActivity extends Resource {
 
     private String clientId;
     private String api;
     private Date firstCall;
     private Date lastCall;
-    private float avgCallsPerDay;
+    private double avgCallsPerDay;
 
-    public AppActivity(String clientId, String api, Date firstCall, Date lastCall, float averageCallsPerDay) {
+    public AppActivity(String clientId, String api, Date firstCall, Date lastCall, double averageCallsPerDay) {
         this.clientId = clientId;
         this.api = api;
         this.firstCall = firstCall;
@@ -55,11 +55,11 @@ public class AppActivity extends Resource{
         this.lastCall = lastCall;
     }
 
-    public float getAvgCallsPerDay() {
+    public double getAvgCallsPerDay() {
         return avgCallsPerDay;
     }
 
-    public void setAvgCallsPerDay(float avgCallsPerDay) {
+    public void setAvgCallsPerDay(double avgCallsPerDay) {
         this.avgCallsPerDay = avgCallsPerDay;
     }
 }
