@@ -1,34 +1,73 @@
-# Monitoring Service 
+# Monitoring Service [![Circle CI](https://circleci.com/gh/Rise-Vision/monitoring-service.svg?style=svg)](https://circleci.com/gh/Rise-Vision/monitoring-service)
 
 ## Introduction
 
-*Include a description of Project Name and what it's purpose is. This does this to achieve this for you. Do not use acronyms. If applicable include screenshots and other images, links to demonstration examples, user documentation and any other applicable reference materials.*
+Monitoring Service is a [Google Cloud Endpoints](https://cloud.google.com/appengine/docs/java/endpoints/) application service which contains APIs for retrieving monitoring data
+related to our backend systems. It basically query a BigQuery Dataset which contains logs from these systems.
 
 Project Name works in conjunction with [Rise Vision](http://www.risevision.com), the [digital signage management application](http://rva.risevision.com/) that runs on [Google Cloud](https://cloud.google.com).
 
 At this time Chrome is the only browser that this project and Rise Vision supports.
 
 ## Built With
-*example list follows, replace with actual tools used*
-- *NPM (node package manager)*
-- *Angularjs*
-- *Gulp*
-- *Bower*
-- *Karma and Mocha for testing*
+- Java (1.7)
+- [GAE](https://cloud.google.com/appengine/docs)
+- [Google Cloud Endpoints](https://cloud.google.com/appengine/docs/java/endpoints/)
+- Maven
+- [Mockito](https://github.com/mockito/mockito)
+
 
 ## Development
 
 ### Local Development Environment Setup and Installation
-*provide exact details on how to setup the local environment for at least Windows, and if doable, Linux and Mac*
+* Maven 3 is required so you need to do some things to make sure your apt-get doesn't install an older version of maven.
+
+* clone the repo using Git to your local:
+```bash
+git clone https://github.com/Rise-Vision/monitoring-service.git
+```
+
+* cd into the repo directory
+```bash
+cd monitoring-service
+```
+
+* Run this command to build locally
+``` bash
+mvn clean install
+```
 
 ### Run Local
-*include how to run the application locally if applicable*
+
+* Run the application with below command, and ensure it's running by visiting your local server's api explorer's address (by default [localhost:8080/_ah/api/explorer](https://localhost:8080/_ah/api/explorer).)
+
+``` bash
+mvn appengine:devserver
+```
+
+* Get the client library with the below command. It will generate a client library jar file under the `target/endpoints-client-libs/<api-name>/target` directory of your project, as well as install the artifact into your local maven repository.
+   
+``` bash
+mvn appengine:endpoints_get_client_lib
+```
+
+* Deploy your application to Google App Engine with
+
+``` bash
+mvn appengine:update
+```
 
 ### Dependencies
-*include and describe all dependencies*
+* Junit for testing 
+* Mockito for mocking and testing
+* Google App Engine SDK
 
 ### Testing
-*include how to run unit and e2e testing*
+* Run this command to test locally
+
+``` bash
+mvn test
+```
 
 ## Submitting Issues
 If you encounter problems or find defects we really want to hear about them. If you could take the time to add them as issues to this Repository it would be most appreciated. When reporting issues please use the following format where applicable:
@@ -50,26 +89,6 @@ What actually happened. (screenshots / video captures always help)
 ## Contributing
 All contributions are greatly appreciated and welcome! If you would first like to sound out your contribution ideas please post your thoughts to our [community](http://community.risevision.com), otherwise submit a pull request and we will do our best to incorporate it
 
-### Languages
-*If this Project supports Internationalization include this section:*
-
-If you would like translate the user interface for this product to another language please complete the following:
-- Download the english translation file from this repository.
-- Download and install POEdit. This is software that you can use to write translations into another language.
-- Open the translation file in the [POEdit](http://www.poedit.net/) program and set the language for which you are writing a translation.
-- In the Source text window, you will see the English word or phrase to be translated. You can provide a translation for it in the Translation window.
-- When the translation is complete, save it with a .po extension and email the file to support@risevision.com. Please be sure to indicate the Widget or app the translation file is for, as well as the language that it has been translated into, and we will integrate it after the translation has been verified.
-
-*if the Project does not support Internationalization include this section and include this need in our suggested contributions*
-
-In order to support languages i18n needs to be added to this repository.  Please refer to our Suggested Contributions.
-
-### Suggested Contributions
-- *we need this*
-- *and we need that*
-- *we could really use this*
-- *and if we don't already have it (see above), we could use i18n Language Support*
-
 ## Resources
 If you have any questions or problems please don't hesitate to join our lively and responsive community at http://community.risevision.com.
 
@@ -79,4 +98,4 @@ If you would like more information on developing applications for Rise Vision pl
 
 **Facilitator**
 
-[Byron Darlison](https://github.com/ByronDarlison "Byron Darlison")
+[Rodrigo Serviuc Pavezi](https://github.com/rodrigopavezi "Rodrigo Serviuc Pavezi")
