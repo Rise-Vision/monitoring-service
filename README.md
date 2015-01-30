@@ -5,7 +5,7 @@
 Monitoring Service is a [Google Cloud Endpoints](https://cloud.google.com/appengine/docs/java/endpoints/) application service which contains APIs for retrieving monitoring data
 related to our backend systems. It basically query a BigQuery Dataset which contains logs from these systems.
 
-Project Name works in conjunction with [Rise Vision](http://www.risevision.com), the [digital signage management application](http://rva.risevision.com/) that runs on [Google Cloud](https://cloud.google.com).
+Monitoring Service works in conjunction with [Rise Vision](http://www.risevision.com), the [digital signage management application](http://rva.risevision.com/) that runs on [Google Cloud](https://cloud.google.com).
 
 At this time Chrome is the only browser that this project and Rise Vision supports.
 
