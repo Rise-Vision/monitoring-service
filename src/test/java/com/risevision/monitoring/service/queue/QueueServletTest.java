@@ -1,7 +1,5 @@
-package com.risevision.monitoring.service.services.queue;
+package com.risevision.monitoring.service.queue;
 
-import com.risevision.monitoring.service.queue.QueueParameters;
-import com.risevision.monitoring.service.queue.QueueServlet;
 import com.risevision.monitoring.service.queue.tasks.MonitoringLogTask;
 import com.risevision.monitoring.service.queue.tasks.MonitoringLogTaskParameters;
 import org.junit.Before;
@@ -34,9 +32,8 @@ public class QueueServletTest {
     private String ip;
     private String host;
     private String resource;
-    private String clientId;
+    private String bearerToken;
     private String api;
-    private String userId;
     private String time;
 
     @Before
@@ -48,23 +45,21 @@ public class QueueServletTest {
         ip = "1.1.1.1";
         host = "test.com";
         resource = "/_ah/spi/test";
-        clientId = "xxxxxxx";
+        bearerToken = "xxxxxxx";
         api = "CoreAPIv1";
-        userId = "example@gmail.com";
         time = String.valueOf(System.currentTimeMillis() / 1000L);
 
         given(httpServletRequest.getParameter(QueueParameters.TASK)).willReturn(QueueParameters.MONITORING_LOG_TASK);
         given(httpServletRequest.getParameter(MonitoringLogTaskParameters.IP)).willReturn(ip);
         given(httpServletRequest.getParameter(MonitoringLogTaskParameters.HOST)).willReturn(host);
         given(httpServletRequest.getParameter(MonitoringLogTaskParameters.RESOURCE)).willReturn(resource);
-        given(httpServletRequest.getParameter(MonitoringLogTaskParameters.CLIENT_ID)).willReturn(clientId);
+        given(httpServletRequest.getParameter(MonitoringLogTaskParameters.BEARER_TOKEN)).willReturn(bearerToken);
         given(httpServletRequest.getParameter(MonitoringLogTaskParameters.API)).willReturn(api);
-        given(httpServletRequest.getParameter(MonitoringLogTaskParameters.USER_ID)).willReturn(userId);
         given(httpServletRequest.getParameter(MonitoringLogTaskParameters.TIME)).willReturn(time);
     }
 
     @Test
-    public void testMonitoringLogTask() throws IOException {
+    public void testMonitoringLogTask() throws Exception {
 
 
         queueServlet.doGet(httpServletRequest, httpServletResponse);
@@ -73,19 +68,18 @@ public class QueueServletTest {
         verify(httpServletRequest).getParameter(MonitoringLogTaskParameters.IP);
         verify(httpServletRequest).getParameter(MonitoringLogTaskParameters.HOST);
         verify(httpServletRequest).getParameter(MonitoringLogTaskParameters.RESOURCE);
-        verify(httpServletRequest).getParameter(MonitoringLogTaskParameters.CLIENT_ID);
+        verify(httpServletRequest).getParameter(MonitoringLogTaskParameters.BEARER_TOKEN);
         verify(httpServletRequest).getParameter(MonitoringLogTaskParameters.API);
-        verify(httpServletRequest).getParameter(MonitoringLogTaskParameters.USER_ID);
         verify(httpServletRequest).getParameter(MonitoringLogTaskParameters.TIME);
 
-        verify(monitoringLogTask).execute(ip, host, resource, clientId, api, userId, time);
+        verify(monitoringLogTask).execute(ip, host, resource, bearerToken, api, time);
 
     }
 
     @Test
-    public void testResponseWithInternalServerErrorWhenExceptionHappens() throws IOException {
+    public void testResponseWithInternalServerErrorWhenExceptionHappens() throws Exception {
 
-        willThrow(new IOException()).given(monitoringLogTask).execute(ip, host, resource, clientId, api, userId, time);
+        willThrow(new IOException()).given(monitoringLogTask).execute(ip, host, resource, bearerToken, api, time);
 
         queueServlet.doGet(httpServletRequest, httpServletResponse);
 

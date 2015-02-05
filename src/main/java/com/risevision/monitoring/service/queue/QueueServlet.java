@@ -47,12 +47,11 @@ public class QueueServlet extends HttpServlet {
                 String ip = req.getParameter(MonitoringLogTaskParameters.IP);
                 String host = req.getParameter(MonitoringLogTaskParameters.HOST);
                 String resource = req.getParameter(MonitoringLogTaskParameters.RESOURCE);
-                String clientId = req.getParameter(MonitoringLogTaskParameters.CLIENT_ID);
+                String bearerToken = req.getParameter(MonitoringLogTaskParameters.BEARER_TOKEN);
                 String api = req.getParameter(MonitoringLogTaskParameters.API);
-                String userId = req.getParameter(MonitoringLogTaskParameters.USER_ID);
                 String time = req.getParameter(MonitoringLogTaskParameters.TIME);
 
-                monitoringLogTask.execute(ip, host, resource, clientId, api, userId, time);
+                monitoringLogTask.execute(ip, host, resource, bearerToken, api, time);
 
             }
         } catch (Exception e) {
