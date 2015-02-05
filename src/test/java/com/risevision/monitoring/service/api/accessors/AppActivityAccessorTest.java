@@ -40,17 +40,15 @@ public class AppActivityAccessorTest {
         appActivityAccessor = new AppActivityAccessor(appActivityService);
         api = "CoreAPIv1";
         clientId = "xxxxxxxxxxx";
-        user = new User("example@gmail.com", "authDomain");
-
     }
 
     @Test
     public void testGetAppActivityForAnAPIAndAClientId() throws ServiceException, ValidationException, IOException, InterruptedException {
-        given(appActivityService.getActivity(clientId, api, user)).willReturn(appActivityEntity);
+        given(appActivityService.getActivity(clientId, api)).willReturn(appActivityEntity);
 
-        AppActivity response = appActivityAccessor.get(clientId, api, user);
+        AppActivity response = appActivityAccessor.get(clientId, api);
 
-        verify(appActivityService).getActivity(clientId, api, user);
+        verify(appActivityService).getActivity(clientId, api);
 
         assertThat(clientId, is(response.getClientId()));
         assertThat(api, is(response.getApi()));

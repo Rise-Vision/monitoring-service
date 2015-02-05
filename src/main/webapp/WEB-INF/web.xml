@@ -21,7 +21,17 @@
     </filter-mapping>
 
     <servlet>
-        <servlet-name>SystemServiceServlet</servlet-name>
+        <servlet-name>Queue</servlet-name>
+        <servlet-class>com.risevision.monitoring.service.queue.QueueServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Queue</servlet-name>
+        <url-pattern>/queue</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+    <servlet-name>SystemServiceServlet</servlet-name>
         <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
         <init-param>
             <param-name>services</param-name>

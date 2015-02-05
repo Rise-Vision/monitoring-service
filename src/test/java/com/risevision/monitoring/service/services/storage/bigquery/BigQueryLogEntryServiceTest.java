@@ -4,6 +4,7 @@ import com.google.api.services.bigquery.model.Job;
 import com.google.api.services.bigquery.model.JobReference;
 import com.google.api.services.bigquery.model.TableCell;
 import com.google.api.services.bigquery.model.TableRow;
+import com.risevision.monitoring.service.services.storage.bigquery.entities.AppengineLogEntry;
 import com.risevision.monitoring.service.services.storage.bigquery.entities.LogEntry;
 import com.risevision.monitoring.service.util.Options;
 import org.junit.Before;
@@ -54,7 +55,7 @@ public class BigQueryLogEntryServiceTest {
     @Before
     public void setup() throws ParseException {
         MockitoAnnotations.initMocks(this);
-        bigQueryLogEntryService = new BiqQueryLogEntryService(bigQueryService, queryBuilderService, options);
+        bigQueryLogEntryService = new BiqQueryAppengineLogEntryService(bigQueryService, queryBuilderService, options);
 
         jobReference = new JobReference();
         job = new Job();
@@ -68,7 +69,7 @@ public class BigQueryLogEntryServiceTest {
             logEntries.add(logEntry);
 
             TableRow row = new TableRow();
-            row.setF(getCells(logEntry));
+            row.setF(getCells((AppengineLogEntry) logEntry));
             rows.add(row);
         }
 
@@ -88,7 +89,7 @@ public class BigQueryLogEntryServiceTest {
 
 
     private LogEntry getLogEntry() {
-        LogEntry logEntry = new LogEntry();
+        AppengineLogEntry logEntry = new AppengineLogEntry();
         logEntry.setIp("1.1.1.1");
         logEntry.setHost("test.com");
         logEntry.setResource("/test/test");
@@ -100,7 +101,7 @@ public class BigQueryLogEntryServiceTest {
     }
 
 
-    private List<TableCell> getCells(LogEntry logEntry) {
+    private List<TableCell> getCells(AppengineLogEntry logEntry) {
 
         List<TableCell> cells = new LinkedList<>();
 

@@ -42,7 +42,7 @@ public class MonitoringAPIv0 {
         AppActivityAccessor appActivityAccessor = new AppActivityAccessor();
         Resource resource;
         try {
-            resource = appActivityAccessor.get(clientId, api, user);
+            resource = appActivityAccessor.get(clientId, api);
 
         } catch (ValidationException exception) {
             throw new BadRequestException(exception);

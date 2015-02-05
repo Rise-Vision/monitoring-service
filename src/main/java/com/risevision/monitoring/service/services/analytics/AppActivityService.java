@@ -1,6 +1,5 @@
 package com.risevision.monitoring.service.services.analytics;
 
-import com.google.appengine.api.users.User;
 import com.risevision.monitoring.service.services.storage.datastore.entities.AppActivityEntity;
 
 /**
@@ -8,5 +7,5 @@ import com.risevision.monitoring.service.services.storage.datastore.entities.App
  */
 public interface AppActivityService {
 
-    public AppActivityEntity getActivity(String clientId, String api, User user);
+    public AppActivityEntity getActivity(String clientId, String api);
 }

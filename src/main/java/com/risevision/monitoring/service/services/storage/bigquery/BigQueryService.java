@@ -1,9 +1,6 @@
 package com.risevision.monitoring.service.services.storage.bigquery;
 
-import com.google.api.services.bigquery.model.Job;
-import com.google.api.services.bigquery.model.JobReference;
-import com.google.api.services.bigquery.model.TableList;
-import com.google.api.services.bigquery.model.TableRow;
+import com.google.api.services.bigquery.model.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,4 +17,6 @@ public interface BigQueryService {
     public Job checkQueryResults(String projectId, JobReference job) throws IOException, InterruptedException;
 
     public List<TableRow> getQueryResults(String projectId, Job completedJob) throws IOException;
+
+    public TableDataInsertAllResponse streamInsert(String projectId, String datasetId, String tableId, TableRow tableRow, String insertId) throws IOException;
 }

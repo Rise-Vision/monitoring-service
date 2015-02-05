@@ -18,7 +18,7 @@ import static org.mockito.BDDMockito.given;
 /**
  * Created by rodrigopavezi on 1/27/15.
  */
-public class LogEntryQueryBuilderServiceTest {
+public class AppengineLogEntryQueryBuilderServiceTest {
 
     @Mock
     private BigQueryService bigQueryService;
@@ -32,7 +32,7 @@ public class LogEntryQueryBuilderServiceTest {
     private String clientId;
     private String api;
     private String conditionalWithAPIAndClientId;
-    private String orderBy; 
+    private String orderBy;
 
 
     @Before
@@ -41,7 +41,7 @@ public class LogEntryQueryBuilderServiceTest {
         projectId = "projectId";
         datasetId = "datasetId";
 
-        logEntryQueryBuilderService = new LogEntryQueryBuilderService(bigQueryService, projectId, datasetId);
+        logEntryQueryBuilderService = new AppengineLogEntryQueryBuilderService(bigQueryService, projectId, datasetId);
 
         tables = new LinkedList<>();
         tableIds = new LinkedList<>();

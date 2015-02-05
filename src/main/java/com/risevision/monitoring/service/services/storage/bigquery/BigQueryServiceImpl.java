@@ -13,6 +13,7 @@ import com.google.apphosting.api.ApiProxy;
 import com.google.apphosting.api.ApiProxy.Environment;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,8 +22,8 @@ import java.util.logging.Logger;
 
 public class BigQueryServiceImpl implements BigQueryService {
 
+    private final Logger logger = Logger.getLogger(BigQueryServiceImpl.class.getName());
 
-    private final Logger log = Logger.getAnonymousLogger();
     private final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
     private final JsonFactory JSON_FACTORY = new GsonFactory();
     private final List<String> BIGQUERY_SCOPE = Arrays.asList(BigqueryScopes.BIGQUERY);
@@ -35,7 +36,7 @@ public class BigQueryServiceImpl implements BigQueryService {
     @Override
     public JobReference startQuery(String query, String projectId) throws IOException {
 
-        log.info("Starting Query: " + query);
+        logger.info("Starting Query: " + query);
 
         Job job = new Job();
         JobConfiguration config = new JobConfiguration();
@@ -49,7 +50,7 @@ public class BigQueryServiceImpl implements BigQueryService {
         Insert insert = bigquery.jobs().insert(projectId, job);
         JobReference jobRef = insert.execute().getJobReference();
 
-        log.info("Job ID of Query Job is::" + jobRef.getJobId());
+        logger.info("Job ID of Query Job is::" + jobRef.getJobId());
 
         return jobRef;
     }
@@ -77,7 +78,7 @@ public class BigQueryServiceImpl implements BigQueryService {
         while (true) {
             Job pollJob = bigquery.jobs().get(projectId, job.getJobId()).execute();
             elapsedTime = System.currentTimeMillis() - startTime;
-            log.log(Level.INFO, "Job status {1} {2}: {3}", new Object[]{elapsedTime, job.getJobId(), pollJob.getStatus().getState()});
+            logger.log(Level.INFO, "Job status {1} {2}: {3}", new Object[]{elapsedTime, job.getJobId(), pollJob.getStatus().getState()});
             if (pollJob.getStatus().getState().equals("DONE")) {
                 return pollJob;
             }
@@ -97,6 +98,22 @@ public class BigQueryServiceImpl implements BigQueryService {
                                 .getJobId()
                 ).execute();
         return queryResult.getRows();
+    }
+
+    @Override
+    public TableDataInsertAllResponse streamInsert(String projectId, String datasetId, String tableId, TableRow tableRow, String insertId) throws IOException {
+
+        ArrayList<TableDataInsertAllRequest.Rows> rowList = new ArrayList();
+
+        TableDataInsertAllRequest.Rows requestRow = new TableDataInsertAllRequest.Rows();
+        requestRow.setJson(tableRow);
+        requestRow.setInsertId(insertId);
+        rowList.add(requestRow);
+
+        TableDataInsertAllRequest content = new TableDataInsertAllRequest().setRows(rowList);
+
+        return bigquery.tabledata().insertAll(projectId, datasetId, tableId, content).execute();
+
     }
 
     private Bigquery getBigquery() {

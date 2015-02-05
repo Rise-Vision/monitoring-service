@@ -11,11 +11,13 @@ public class Options {
     private static Options instance;
     private final String PROJECT_ID;
     private final String DATASET_ID;
+    private final String MONITORING_LOG_TABLE_ID;
 
     public Options() {
         Config conf = ConfigFactory.load();
         this.PROJECT_ID = conf.getString("monitoring-service.bigquery.productId");
         this.DATASET_ID = conf.getString("monitoring-service.bigquery.datasetId");
+        this.MONITORING_LOG_TABLE_ID = conf.getString("monitoring-service.bigquery.monitoringLogTableId");
     }
 
     public static Options getInstance() {
@@ -35,5 +37,9 @@ public class Options {
 
     public String getDATASET_ID() {
         return DATASET_ID;
+    }
+
+    public String getMONITORING_LOG_TABLE_ID() {
+        return MONITORING_LOG_TABLE_ID;
     }
 }

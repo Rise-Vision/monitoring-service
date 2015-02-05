@@ -3,6 +3,7 @@ package com.risevision.monitoring.service.services.storage.bigquery;
 import com.google.api.services.bigquery.model.Job;
 import com.google.api.services.bigquery.model.JobReference;
 import com.google.api.services.bigquery.model.TableRow;
+import com.risevision.monitoring.service.services.storage.bigquery.entities.AppengineLogEntry;
 import com.risevision.monitoring.service.services.storage.bigquery.entities.LogEntry;
 import com.risevision.monitoring.service.util.Options;
 
@@ -15,21 +16,21 @@ import java.util.logging.Logger;
 /**
  * Created by rodrigopavezi on 1/22/15.
  */
-public class BiqQueryLogEntryService implements LogEntryService {
+public class BiqQueryAppengineLogEntryService implements LogEntryService {
 
-    private final Logger logger = Logger.getLogger(BiqQueryLogEntryService.class.getName());
+    private final Logger logger = Logger.getLogger(BiqQueryAppengineLogEntryService.class.getName());
 
     private BigQueryService bigQueryService;
     private QueryBuilderService logEntryQueryBuilderService;
     private Options options;
 
-    public BiqQueryLogEntryService() {
+    public BiqQueryAppengineLogEntryService() {
         bigQueryService = new BigQueryServiceImpl();
         options = Options.getInstance();
-        logEntryQueryBuilderService = new LogEntryQueryBuilderService(bigQueryService, options.getPROJECT_ID(), options.getDATASET_ID());
+        logEntryQueryBuilderService = new AppengineLogEntryQueryBuilderService(bigQueryService, options.getPROJECT_ID(), options.getDATASET_ID());
     }
 
-    public BiqQueryLogEntryService(BigQueryService bigQueryService, QueryBuilderService logEntryQueryBuilderService, Options options) {
+    public BiqQueryAppengineLogEntryService(BigQueryService bigQueryService, QueryBuilderService logEntryQueryBuilderService, Options options) {
         this.bigQueryService = bigQueryService;
         this.logEntryQueryBuilderService = logEntryQueryBuilderService;
         this.options = options;
@@ -87,7 +88,7 @@ public class BiqQueryLogEntryService implements LogEntryService {
             if (resultRows != null && resultRows.size() > 0) {
                 logEntries = new LinkedList<>();
                 for (TableRow row : resultRows) {
-                    LogEntry logEntry = new LogEntry();
+                    AppengineLogEntry logEntry = new AppengineLogEntry();
                     logEntry.setIp((String) row.getF().get(0).getV());
                     logEntry.setHost((String) row.getF().get(1).getV());
                     logEntry.setResource((String) row.getF().get(2).getV());

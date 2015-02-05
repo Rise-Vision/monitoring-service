@@ -10,7 +10,6 @@ public class LogEntry {
     private String ip;
     private String host;
     private String resource;
-    private String logMessage;
     private Date time;
 
     public Date getTime() {
@@ -45,13 +44,6 @@ public class LogEntry {
         this.resource = resource;
     }
 
-    public String getLogMessage() {
-        return logMessage;
-    }
-
-    public void setLogMessage(String logMessage) {
-        this.logMessage = logMessage;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -62,7 +54,6 @@ public class LogEntry {
 
         if (host != null ? !host.equals(logEntry.host) : logEntry.host != null) return false;
         if (ip != null ? !ip.equals(logEntry.ip) : logEntry.ip != null) return false;
-        if (logMessage != null ? !logMessage.equals(logEntry.logMessage) : logEntry.logMessage != null) return false;
         if (resource != null ? !resource.equals(logEntry.resource) : logEntry.resource != null) return false;
         if (time != null ? !time.equals(logEntry.time) : logEntry.time != null) return false;
 
@@ -74,7 +65,6 @@ public class LogEntry {
         int result = ip != null ? ip.hashCode() : 0;
         result = 31 * result + (host != null ? host.hashCode() : 0);
         result = 31 * result + (resource != null ? resource.hashCode() : 0);
-        result = 31 * result + (logMessage != null ? logMessage.hashCode() : 0);
         result = 31 * result + (time != null ? time.hashCode() : 0);
         return result;
     }

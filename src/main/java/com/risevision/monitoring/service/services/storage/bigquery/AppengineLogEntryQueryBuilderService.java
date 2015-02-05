@@ -9,16 +9,16 @@ import java.util.logging.Logger;
 /**
  * Created by rodrigopavezi on 1/27/15.
  */
-public class LogEntryQueryBuilderService implements QueryBuilderService {
+public class AppengineLogEntryQueryBuilderService implements QueryBuilderService {
 
 
-    private final Logger logger = Logger.getLogger(LogEntryQueryBuilderService.class.getName());
+    private final Logger logger = Logger.getLogger(AppengineLogEntryQueryBuilderService.class.getName());
 
     private BigQueryService bigQueryService;
     private String projectId;
     private String datasetId;
 
-    public LogEntryQueryBuilderService(BigQueryService bigQueryService, String projectId, String datasetId) {
+    public AppengineLogEntryQueryBuilderService(BigQueryService bigQueryService, String projectId, String datasetId) {
         this.bigQueryService = bigQueryService;
         this.projectId = projectId;
         this.datasetId = datasetId;
