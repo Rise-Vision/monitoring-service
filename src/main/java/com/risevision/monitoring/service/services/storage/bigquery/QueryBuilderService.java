@@ -6,4 +6,5 @@ package com.risevision.monitoring.service.services.storage.bigquery;
 public interface QueryBuilderService {
 
     public String buildQuery(String conditional, String orderBy);
+
 }

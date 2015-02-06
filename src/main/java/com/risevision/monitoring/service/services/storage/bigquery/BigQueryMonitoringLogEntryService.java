@@ -27,7 +27,7 @@ public class BigQueryMonitoringLogEntryService implements LogEntryService {
     public BigQueryMonitoringLogEntryService() {
         bigQueryService = new BigQueryServiceImpl();
         options = Options.getInstance();
-        monitoringQueryBuilderService = new MonitoringQueryBuilderService();
+        monitoringQueryBuilderService = new MonitoringQueryBuilderService(options);
     }
 
     public BigQueryMonitoringLogEntryService(BigQueryService bigQueryService, QueryBuilderService logEntryQueryBuilderService, Options options) {
