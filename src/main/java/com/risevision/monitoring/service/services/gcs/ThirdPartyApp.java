@@ -1,8 +1,7 @@
 package com.risevision.monitoring.service.services.gcs;
 
+import com.google.api.client.util.DateTime;
 import com.google.api.client.util.Key;
-
-import java.util.Date;
 
 /**
  * Created by rodrigopavezi on 2/9/15.
@@ -22,11 +21,11 @@ public class ThirdPartyApp {
     @Key
     private boolean isInternal;
     @Key
-    private Date creationDate;
+    private DateTime creationDate;
     @Key
     private String changedBy;
     @Key
-    private Date changeDate;
+    private DateTime changeDate;
 
     public String getId() {
         return id;
@@ -52,7 +51,7 @@ public class ThirdPartyApp {
         return isInternal;
     }
 
-    public Date getCreationDate() {
+    public DateTime getCreationDate() {
         return creationDate;
     }
 
@@ -60,7 +59,7 @@ public class ThirdPartyApp {
         return changedBy;
     }
 
-    public Date getChangeDate() {
+    public DateTime getChangeDate() {
         return changeDate;
     }
 }
