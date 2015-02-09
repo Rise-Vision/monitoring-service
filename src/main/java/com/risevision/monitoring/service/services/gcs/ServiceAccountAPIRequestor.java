@@ -43,6 +43,7 @@ public class ServiceAccountAPIRequestor {
             this.requestInitializer = new HttpRequestInitializer() {
                 public void initialize(HttpRequest request) throws IOException {
                     request.setInterceptor(credential);
+                    request.setParser(parser);
                 }
             };
 
