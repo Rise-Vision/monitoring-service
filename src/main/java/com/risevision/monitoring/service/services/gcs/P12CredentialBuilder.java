@@ -34,7 +34,7 @@ public class P12CredentialBuilder {
                 .setServiceAccountScopes
                         (Arrays.asList(options.getEMAIL_SCOPE(), options.getSTORAGE_SCOPE(), options.getBQ_SCOPE()));
 
-        log.info("Credential file: " + p12path + "Id: " + id);
+        log.info("Credential file: " + p12path + " Id: " + id);
 
         try {
             File p12File = new File(p12path);
