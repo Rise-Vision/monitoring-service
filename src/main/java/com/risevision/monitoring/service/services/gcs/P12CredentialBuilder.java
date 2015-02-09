@@ -8,6 +8,7 @@ import com.risevision.monitoring.service.util.Options;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class P12CredentialBuilder {
@@ -33,12 +34,14 @@ public class P12CredentialBuilder {
                 .setServiceAccountScopes
                         (Arrays.asList(options.getEMAIL_SCOPE(), options.getSTORAGE_SCOPE(), options.getBQ_SCOPE()));
 
+        log.info("Credential file: " + p12path + "Id: " + id);
+
         try {
             File p12File = new File(p12path);
             credential = builder.setServiceAccountPrivateKeyFromP12File(p12File).build();
             credential.refreshToken();
         } catch (Exception e) {
-            log.warning("Error building credential");
+            log.log(Level.WARNING, "Error building credential", e);
             e.printStackTrace();
         }
 
