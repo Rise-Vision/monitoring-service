@@ -1,8 +1,12 @@
 package com.risevision.monitoring.service.api.accessors;
 
+import com.google.api.server.spi.ServiceException;
+import com.google.appengine.api.users.User;
 import com.risevision.monitoring.service.api.resources.AppActivity;
 import com.risevision.monitoring.service.services.analytics.AppActivityService;
 import com.risevision.monitoring.service.services.analytics.AppActivityServiceImpl;
+import com.risevision.monitoring.service.services.gcs.AuthorizationService;
+import com.risevision.monitoring.service.services.gcs.AuthorizationServiceImpl;
 import com.risevision.monitoring.service.services.storage.datastore.entities.AppActivityEntity;
 
 import javax.xml.bind.ValidationException;
@@ -14,16 +18,19 @@ public class AppActivityAccessor {
 
 
     private AppActivityService appActivityService;
+    private AuthorizationService authorizationService;
 
     public AppActivityAccessor() {
         this.appActivityService = new AppActivityServiceImpl();
+        this.authorizationService = new AuthorizationServiceImpl();
     }
 
-    public AppActivityAccessor(AppActivityService appActivityService) {
+    public AppActivityAccessor(AppActivityService appActivityService, AuthorizationService authorizationService) {
         this.appActivityService = appActivityService;
+        this.authorizationService = authorizationService;
     }
 
-    public AppActivity get(String clientId, String api) throws ValidationException {
+    public AppActivity get(String clientId, String api, User user) throws ValidationException, ServiceException {
 
         if (clientId == null || clientId.isEmpty()) {
             throw new ValidationException("Client Id cannot be null or empty.");
@@ -32,6 +39,8 @@ public class AppActivityAccessor {
         if (api == null || api.isEmpty()) {
             throw new ValidationException("Api cannot be null or empty.");
         }
+
+        authorizationService.verifyAuthorization(user, clientId);
 
         AppActivity appActivity;
 
@@ -45,4 +54,5 @@ public class AppActivityAccessor {
 
         return appActivity;
     }
+
 }

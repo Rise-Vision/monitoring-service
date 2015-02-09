@@ -1,7 +1,12 @@
 dependencies:
+  pre:
+    - mkdir -p src/private-keys
+    - git clone -b feature/monitoring-service git@github.com:Rise-Vision/private-keys.git
+    - cp private-keys/monitoring-service/* src/private-keys
   cache_directories:
     - /home/ubuntu/nvm
   post:
+    - if [[ ! -e src/private-keys/rvaserver2-7ab43ba8bac3.p12 ]]; then exit 1; fi
     - mvn install
     - pwd && mvn appengine:devserver_start:
         background: true
