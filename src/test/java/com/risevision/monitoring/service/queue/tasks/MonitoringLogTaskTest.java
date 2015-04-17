@@ -11,12 +11,13 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by rodrigopavezi on 2/5/15.
@@ -83,7 +84,7 @@ public class MonitoringLogTaskTest {
 
         verify(googleOAuthClientService).lookupTokenInfo(bearerToken);
         verify(tokenInfo, atLeastOnce()).getIssued_to();
-        verify(tokenInfo).getEmail();
+        verify(tokenInfo, atMost(3)).getEmail();
 
         verify(bigQueryService).streamInsert(eq(projectId), eq(datasetId), eq(tableId), eq(row), anyString());
 
@@ -91,32 +92,114 @@ public class MonitoringLogTaskTest {
         assertThat(row.get(MonitoringLogTaskParameters.USER_ID), CoreMatchers.<Object>is(userId));
     }
 
-    @Test(expected = Exception.class)
-    public void testMonitoringTestExecutesButDoesNotCallStreamInsertBecauseTokenInfoIsNull() throws Exception {
+    @Test
+    public void testMonitoringTestExecutesAndCallsStreamInsertWithTokenExpiredBecauseTokenInfoIsNull() throws IOException {
+
+        clientId = "N/A (token expired)";
+        userId = "N/A (token expired)";
 
         given(googleOAuthClientService.lookupTokenInfo(bearerToken)).willReturn(null);
 
         monitoringLogTask.execute(ip, host, resource, bearerToken, api, time);
+
+        verify(googleOAuthClientService, atMost(3)).lookupTokenInfo(bearerToken);
+
+        assertThat(row.get(MonitoringLogTaskParameters.CLIENT_ID), CoreMatchers.<Object>is(clientId));
+        assertThat(row.get(MonitoringLogTaskParameters.USER_ID), CoreMatchers.<Object>is(userId));
     }
 
-    @Test(expected = Exception.class)
-    public void testMonitoringTestExecutesButDoesNotCallStreamInsertBecauseClientIdIsNull() throws Exception {
+    @Test
+    public void testMonitoringTestExecutesAndCallsStreamInsertWithTokenExpiredBecauseClientIdIsNull() throws IOException {
+
+        clientId = "N/A (token expired)";
 
         given(tokenInfo.getIssued_to()).willReturn(null);
         given(tokenInfo.getEmail()).willReturn(userId);
         given(googleOAuthClientService.lookupTokenInfo(bearerToken)).willReturn(tokenInfo);
 
         monitoringLogTask.execute(ip, host, resource, bearerToken, api, time);
+
+        verify(googleOAuthClientService, atMost(1)).lookupTokenInfo(bearerToken);
+        verify(tokenInfo, atMost(2)).getIssued_to();
+        verify(tokenInfo, atMost(3)).getEmail();
+
+        assertThat(row.get(MonitoringLogTaskParameters.CLIENT_ID), CoreMatchers.<Object>is(clientId));
+        assertThat(row.get(MonitoringLogTaskParameters.USER_ID), CoreMatchers.<Object>is(userId));
     }
 
-    @Test(expected = Exception.class)
-    public void testMonitoringTestExecutesButDoesNotCallStreamInsertBecauseClientIdIsEmpty() throws Exception {
+    @Test
+    public void testMonitoringTestExecutesAndCallsStreamInsertWithTokenExpiredBecauseClientIdIsEmpty() throws IOException {
+
+        clientId = "N/A (token expired)";
 
         given(tokenInfo.getIssued_to()).willReturn("");
         given(tokenInfo.getEmail()).willReturn(userId);
         given(googleOAuthClientService.lookupTokenInfo(bearerToken)).willReturn(tokenInfo);
 
         monitoringLogTask.execute(ip, host, resource, bearerToken, api, time);
+
+        verify(googleOAuthClientService, atMost(1)).lookupTokenInfo(bearerToken);
+        verify(tokenInfo, atMost(2)).getIssued_to();
+        verify(tokenInfo, atMost(3)).getEmail();
+
+        assertThat(row.get(MonitoringLogTaskParameters.CLIENT_ID), CoreMatchers.<Object>is(clientId));
+        assertThat(row.get(MonitoringLogTaskParameters.USER_ID), CoreMatchers.<Object>is(userId));
+    }
+
+    @Test
+    public void testMonitoringTestExecutesAndCallsStreamInsertWithTokenExpiredBecauseUserIdIsNull() throws IOException {
+
+        userId = "N/A (token expired)";
+
+        given(tokenInfo.getIssued_to()).willReturn(clientId);
+        given(tokenInfo.getEmail()).willReturn(null);
+        given(googleOAuthClientService.lookupTokenInfo(bearerToken)).willReturn(tokenInfo);
+
+        monitoringLogTask.execute(ip, host, resource, bearerToken, api, time);
+
+        verify(googleOAuthClientService, atMost(1)).lookupTokenInfo(bearerToken);
+        verify(tokenInfo, atMost(3)).getIssued_to();
+        verify(tokenInfo, atMost(2)).getEmail();
+
+        assertThat(row.get(MonitoringLogTaskParameters.CLIENT_ID), CoreMatchers.<Object>is(clientId));
+        assertThat(row.get(MonitoringLogTaskParameters.USER_ID), CoreMatchers.<Object>is(userId));
+    }
+
+    @Test
+    public void testMonitoringTestExecutesAndCallsStreamInsertWithTokenExpiredBecauseUserIdIsEmpty() throws IOException {
+
+        userId = "N/A (token expired)";
+
+        given(tokenInfo.getIssued_to()).willReturn(clientId);
+        given(tokenInfo.getEmail()).willReturn("");
+        given(googleOAuthClientService.lookupTokenInfo(bearerToken)).willReturn(tokenInfo);
+
+        monitoringLogTask.execute(ip, host, resource, bearerToken, api, time);
+
+        verify(googleOAuthClientService, atMost(1)).lookupTokenInfo(bearerToken);
+        verify(tokenInfo, atMost(3)).getIssued_to();
+        verify(tokenInfo, atMost(2)).getEmail();
+
+        assertThat(row.get(MonitoringLogTaskParameters.CLIENT_ID), CoreMatchers.<Object>is(clientId));
+        assertThat(row.get(MonitoringLogTaskParameters.USER_ID), CoreMatchers.<Object>is(userId));
+    }
+
+    @Test
+    public void testMonitoringTestExecutesAndAttemptTwiceWhenThereIsANetworkIssue() throws IOException {
+
+        clientId = "N/A (token expired)";
+        userId = "N/A (token expired)";
+
+        given(googleOAuthClientService.lookupTokenInfo(bearerToken)).willThrow(new IOException());
+
+        monitoringLogTask.execute(ip, host, resource, bearerToken, api, time);
+
+        verify(googleOAuthClientService, atMost(2)).lookupTokenInfo(bearerToken);
+        verify(tokenInfo, never()).getIssued_to();
+        verify(tokenInfo, never()).getEmail();
+
+        assertThat(row.get(MonitoringLogTaskParameters.CLIENT_ID), CoreMatchers.<Object>is(clientId));
+        assertThat(row.get(MonitoringLogTaskParameters.USER_ID), CoreMatchers.<Object>is(userId));
     }
 }
 

@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
+
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
@@ -32,7 +34,7 @@ public class GoogleOAuthClientServiceTest {
     }
 
     @Test
-    public void testLookUpTokenInfo() {
+    public void testLookUpTokenInfo() throws IOException {
         String token = "xxxxxxxxxx";
 
         given(tokenInfoService.getTokenInfo(token)).willReturn(tokenInfo);
@@ -45,7 +47,7 @@ public class GoogleOAuthClientServiceTest {
     }
 
     @Test
-    public void testLookUpTokenInfoReturnsNullIfTokenInfoCannotBeRetrieved() {
+    public void testLookUpTokenInfoReturnsNullIfTokenInfoCannotBeRetrieved() throws IOException {
         String token = "xxxxxxxxxx";
 
         given(tokenInfoService.getTokenInfo(token)).willReturn(null);
@@ -59,7 +61,7 @@ public class GoogleOAuthClientServiceTest {
 
 
     @Test
-    public void testLookUpTokenInfoReturnsNullIfTokenIsEmpty() {
+    public void testLookUpTokenInfoReturnsNullIfTokenIsEmpty() throws IOException {
 
         String token = "";
 
@@ -71,7 +73,7 @@ public class GoogleOAuthClientServiceTest {
     }
 
     @Test
-    public void testLookUpTokenInfoReturnsNullIfTokenNull() {
+    public void testLookUpTokenInfoReturnsNullIfTokenNull() throws IOException {
 
         String token = null;
 
