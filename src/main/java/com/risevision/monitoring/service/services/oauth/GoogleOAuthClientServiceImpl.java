@@ -1,5 +1,6 @@
 package com.risevision.monitoring.service.services.oauth;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
@@ -14,7 +15,7 @@ public class GoogleOAuthClientServiceImpl implements GoogleOAuthClientService {
         this.tokenInfoService = tokenInfoService;
     }
 
-    public TokenInfo lookupTokenInfo(String token) {
+    public TokenInfo lookupTokenInfo(String token) throws IOException {
 
         TokenInfo tokenInfo = null;
 
