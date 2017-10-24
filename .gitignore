@@ -3,3 +3,6 @@
 *.iml
 eclipse-launch-profiles
 target
+.classpath
+.project
+.settings/

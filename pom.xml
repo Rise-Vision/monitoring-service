@@ -20,6 +20,31 @@
         <maven>3.1.0</maven>
     </prerequisites>
 
+    <repositories>
+        <repository>
+            <id>mvn-repo-releases</id>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <name>Maven Repository - Releases</name>
+            <url>https://raw.github.com/Rise-Vision/mvn-repo/releases</url>
+        </repository>
+        <repository>
+            <id>mvn-repo-snapshots</id>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <name>Maven Repository - Snapshots</name>
+            <url>https://raw.github.com/Rise-Vision/mvn-repo/snapshots</url>
+        </repository>
+    </repositories>
+
     <profiles>
         <profile>
             <id>prod</id>
