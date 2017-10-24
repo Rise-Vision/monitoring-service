@@ -155,6 +155,11 @@
             <version>${appengine.target.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.risevision.common</groupId>
+            <artifactId>common-backend-components</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
