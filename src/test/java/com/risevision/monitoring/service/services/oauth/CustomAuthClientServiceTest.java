@@ -2,6 +2,7 @@ package com.risevision.monitoring.service.services.oauth;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 
@@ -28,5 +29,12 @@ public class CustomAuthClientServiceTest {
 
         assertNotNull(tokenInfo);
         assertEquals(tokenInfo.getUser_id(), testEmail);
+    }
+
+    @Test
+    public void testLookUpTokenInfoNotValid() throws IOException {
+        TokenInfo tokenInfo = customAuthClientService.lookupTokenInfo("a.b.c");
+
+        assertNull(tokenInfo);
     }
 }
