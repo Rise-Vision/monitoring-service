@@ -14,6 +14,15 @@ public class TokenInfo {
     private Boolean verified_email;
     private String access_type;
 
+    public TokenInfo() {
+
+    }
+
+    public TokenInfo(String issued_to, String user_id) {
+      this.issued_to = issued_to;
+      this.user_id = user_id;
+    }
+
     public String getIssued_to() {
         return issued_to;
     }

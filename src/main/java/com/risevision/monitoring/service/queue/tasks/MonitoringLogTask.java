@@ -1,6 +1,8 @@
 package com.risevision.monitoring.service.queue.tasks;
 
 import com.google.api.services.bigquery.model.TableRow;
+import com.risevision.monitoring.service.services.oauth.CustomAuthClientService;
+import com.risevision.monitoring.service.services.oauth.CustomAuthClientServiceImpl;
 import com.risevision.monitoring.service.services.oauth.GoogleOAuthClientService;
 import com.risevision.monitoring.service.services.oauth.GoogleOAuthClientServiceImpl;
 import com.risevision.monitoring.service.services.oauth.TokenInfo;
@@ -23,19 +25,22 @@ public class MonitoringLogTask {
     private BigQueryService bigQueryService;
     private Options options;
     private GoogleOAuthClientService googleOAuthClientService;
+    private CustomAuthClientService customAuthClientService;
     private TableRow row;
 
     public MonitoringLogTask() {
         bigQueryService = new BigQueryServiceImpl();
         options = Options.getInstance();
         googleOAuthClientService = new GoogleOAuthClientServiceImpl(new TokenInfoServiceImpl());
+        customAuthClientService = new CustomAuthClientServiceImpl();
         row = new TableRow();
     }
 
-    public MonitoringLogTask(BigQueryService bigQueryService, Options options, GoogleOAuthClientService googleOAuthClientService, TableRow row) {
+    public MonitoringLogTask(BigQueryService bigQueryService, Options options, GoogleOAuthClientService googleOAuthClientService, CustomAuthClientService customAuthClientService, TableRow row) {
         this.bigQueryService = bigQueryService;
         this.options = options;
         this.googleOAuthClientService = googleOAuthClientService;
+        this.customAuthClientService = customAuthClientService;
         this.row = row;
     }
 
@@ -45,15 +50,20 @@ public class MonitoringLogTask {
         String clientId = "N/A (token expired)";
         String userId = "N/A (token expired)";
 
-        // Attempts to get the token info twice before saving a entity without the client id and user email info.
-        try {
-            tokenInfo = googleOAuthClientService.lookupTokenInfo(bearerToken);
-        } catch (IOException e) {
-            try {
-                tokenInfo = googleOAuthClientService.lookupTokenInfo(bearerToken);
-            } catch (IOException e1) {
-                logger.warning("Cannot retrieve Token Info: " + e1.getMessage());
-            }
+        if (customAuthClientService.isCustomAuthToken(bearerToken)) {
+          tokenInfo = customAuthClientService.lookupTokenInfo(bearerToken);
+        }
+        else {
+          // Attempts to get the token info twice before saving a entity without the client id and user email info.
+          try {
+              tokenInfo = googleOAuthClientService.lookupTokenInfo(bearerToken);
+          } catch (IOException e) {
+              try {
+                  tokenInfo = googleOAuthClientService.lookupTokenInfo(bearerToken);
+              } catch (IOException e1) {
+                  logger.warning("Cannot retrieve Token Info: " + e1.getMessage());
+              }
+          }
         }
 
         if (tokenInfo != null) {

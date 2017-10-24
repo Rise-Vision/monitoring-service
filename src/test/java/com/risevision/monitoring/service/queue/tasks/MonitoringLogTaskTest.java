@@ -1,23 +1,28 @@
 package com.risevision.monitoring.service.queue.tasks;
 
-import com.google.api.services.bigquery.model.TableRow;
-import com.risevision.monitoring.service.services.oauth.GoogleOAuthClientService;
-import com.risevision.monitoring.service.services.oauth.TokenInfo;
-import com.risevision.monitoring.service.services.storage.bigquery.BigQueryService;
-import com.risevision.monitoring.service.util.Options;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
+import java.io.IOException;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.io.IOException;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import com.google.api.services.bigquery.model.TableRow;
+import com.risevision.monitoring.service.services.oauth.CustomAuthClientService;
+import com.risevision.monitoring.service.services.oauth.GoogleOAuthClientService;
+import com.risevision.monitoring.service.services.oauth.TokenInfo;
+import com.risevision.monitoring.service.services.storage.bigquery.BigQueryService;
+import com.risevision.monitoring.service.util.Options;
 
 /**
  * Created by rodrigopavezi on 2/5/15.
@@ -30,6 +35,8 @@ public class MonitoringLogTaskTest {
     private Options options;
     @Mock
     private GoogleOAuthClientService googleOAuthClientService;
+    @Mock
+    private CustomAuthClientService customAuthClientService;
     @Mock
     private TokenInfo tokenInfo;
 
@@ -53,7 +60,7 @@ public class MonitoringLogTaskTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         row = new TableRow();
-        monitoringLogTask = new MonitoringLogTask(bigQueryService, options, googleOAuthClientService, row);
+        monitoringLogTask = new MonitoringLogTask(bigQueryService, options, googleOAuthClientService, customAuthClientService, row);
 
         ip = "1.1.1.1";
         host = "test.com";
