@@ -28,7 +28,7 @@ public class CustomAuthClientServiceTest {
         TokenInfo tokenInfo = customAuthClientService.lookupTokenInfo(token);
 
         assertNotNull(tokenInfo);
-        assertEquals(tokenInfo.getUser_id(), testEmail);
+        assertEquals(tokenInfo.getEmail(), testEmail);
     }
 
     @Test

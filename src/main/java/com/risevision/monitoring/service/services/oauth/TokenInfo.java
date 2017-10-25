@@ -18,9 +18,9 @@ public class TokenInfo {
 
     }
 
-    public TokenInfo(String issued_to, String user_id) {
+    public TokenInfo(String issued_to, String email) {
       this.issued_to = issued_to;
-      this.user_id = user_id;
+      this.email = email;
     }
 
     public String getIssued_to() {
