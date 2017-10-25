@@ -17,7 +17,7 @@ public class CustomAuthClientServiceImpl implements CustomAuthClientService {
 		TokenClaims claims = TokenManager.getInstance().getTokenClaims(token);
 		
 		if (claims.getStatus() == TokenStatus.VALID) {
-			tokenInfo = new TokenInfo("Rise Vision's Custom Auth", claims.getSubject());
+			tokenInfo = new TokenInfo("Rise Vision JWT", claims.getSubject());
 		}
 
 		return tokenInfo;
