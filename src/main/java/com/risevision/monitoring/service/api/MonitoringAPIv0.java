@@ -1,6 +1,7 @@
 package com.risevision.monitoring.service.api;
 
 import com.google.api.server.spi.ServiceException;
+import com.google.api.server.spi.auth.EndpointsAuthenticator;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -8,6 +9,7 @@ import com.google.api.server.spi.config.Named;
 import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.users.User;
+import com.risevision.common.security.customauth.UserAuthAuthenticator;
 import com.risevision.monitoring.service.api.accessors.AppActivityAccessor;
 import com.risevision.monitoring.service.api.resources.Resource;
 
@@ -21,7 +23,8 @@ import javax.xml.bind.ValidationException;
         namespace = @ApiNamespace(ownerDomain = "risevision.com",
                 ownerName = "risevision",
                 packagePath = "com/risevision/monitoring"),
-        clientIds = {"614513768474.apps.googleusercontent.com", com.google.api.server.spi.Constant.API_EXPLORER_CLIENT_ID}
+        clientIds = {"614513768474.apps.googleusercontent.com", com.google.api.server.spi.Constant.API_EXPLORER_CLIENT_ID},
+        authenticators = { UserAuthAuthenticator.class, EndpointsAuthenticator.class }
 )
 
 public class MonitoringAPIv0 {
