@@ -1,0 +1,89 @@
+version: 2
+
+jobs:
+  "build":
+    docker: &DOCKERIMAGE
+      - image: jenkinsrise/cci-v2-docker-java8-gcloud:0.0.1
+    working_directory: ~/monitoring-service
+    
+    steps:
+      - checkout
+      - restore_cache:
+          key: monitoring-service-{{ checksum "pom.xml" }}
+      - run: mvn dependency:go-offline -s config/settings.xml
+      - run: mvn clean package -s config/settings.xml
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: monitoring-service-{{ checksum "pom.xml" }}
+            
+  "deploy_stage":
+    docker: *DOCKERIMAGE
+    working_directory: ~/monitoring-service 
+    steps:
+      - checkout
+      - restore_cache:
+          key: monitoring-service-{{ checksum "pom.xml" }}
+      - run:
+          name: Copy private keys
+          command: |
+            git clone git@github.com:Rise-Vision/private-keys.git
+            mkdir -p src/private-keys
+            cp private-keys/monitoring-service/* src/private-keys
+            if [[ ! -e src/private-keys/rvaserver2-b9c4159f9ef9.p12 ]]; then exit 1; fi
+      - run: "echo $ACCT_AUTH_STAGE | base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json"
+      - run: "sudo gcloud --quiet components update"
+      - run: "gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json"
+      - run: "gcloud config set project $PROJECT_ID_STAGE"  
+      - run:
+          name: Deploy if tests pass and branch is not master
+          command: |
+            mvn clean
+            mvn endpoints-framework:discoveryDocs -Dendpoints.hostname=rvacore-test.appspot.com -DskipTests
+            mvn appengine:deploy -s config/settings.xml -DskipTests -Dapp.deploy.version=$(echo -n $CIRCLE_BRANCH |awk 'BEGIN{FS="/"}{print tolower($NF)}') -Dapp.deploy.promote=false -Dapp.deploy.project=rvacore-test -P stage
+          
+  "deploy_prod":
+    docker: *DOCKERIMAGE
+    working_directory: ~/monitoring-service 
+    steps:
+      - checkout
+      - restore_cache:
+          key: monitoring-service-{{ checksum "pom.xml" }}
+      - run:
+          name: Copy private keys
+          command: |
+            git clone git@github.com:Rise-Vision/private-keys.git
+            mkdir -p src/private-keys
+            cp private-keys/monitoring-service/* src/private-keys
+            if [[ ! -e src/private-keys/rvaserver2-b9c4159f9ef9.p12 ]]; then exit 1; fi
+      - run: "echo $ACCT_AUTH | base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json"
+      - run: "sudo gcloud --quiet components update"
+      - run: "gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json"
+      - run: "gcloud config set project $PROJECT_ID"  
+      - run:
+          name: Deploy if tests pass and branch is master
+          command: |
+            mvn clean
+            mvn endpoints-framework:discoveryDocs -Dendpoints.hostname=rvaserver2.appspot.com -DskipTests
+            mvn appengine:deploy -s config/settings.xml -DskipTests -Dapp.deploy.version=r$(echo -n $((CIRCLE_BUILD_NUM%10))) -Dapp.deploy.promote=true -Dapp.deploy.project=rvaserver2 -P prod
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - "build"
+      - "deploy_stage":
+          requires:
+            - build
+          filters:
+            branches:
+              ignore:
+                - master
+
+      - "deploy_prod":
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
